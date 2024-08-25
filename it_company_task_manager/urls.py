@@ -23,5 +23,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("task_manager.urls", namespace="task_manager")),
     path("", include("admin_star.urls")),
-    path("chat/", include("chat.urls")),
+    path("chat/", include("chat.urls", namespace="chat")),
 ] + debug_toolbar_urls()
