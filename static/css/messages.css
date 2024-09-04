@@ -12,6 +12,16 @@ body {
     box-shadow: 0 1px 2px 0 rgb(0 0 0 / 10%);
 }
 
+.card .card-body {
+     padding: 0;
+     margin: 0;
+}
+
+.container, .container-sm, .container-md, .container-lg, .container-xl, .container-xxl  {
+    padding: 0;
+    margin: 0;
+}
+
 .chat-app .people-list {
     width: 280px;
     position: absolute;
@@ -26,7 +36,8 @@ body {
 }
 
 .chat-history {
-    height: 520px;
+    height: 505px;
+            /*520px;*/
     overflow-x: auto;
 }
 
@@ -89,7 +100,12 @@ body {
 
 .chat .chat-header {
     padding: 15px 20px;
+    /*width: 900px;*/
     border-bottom: 2px solid #f4f7f6
+}
+
+.col-lg-12 {
+    width: 1400px;
 }
 
 .chat .chat-header img {
@@ -256,7 +272,8 @@ body {
     }
 
     .chat-app .chat {
-        margin: 0
+        margin: 0;
+        /*width: 100px;*/
     }
 
     .chat-app .chat .chat-header {

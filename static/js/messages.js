@@ -6,16 +6,16 @@ const USER_ID = $('#logged-in-user').val()
 let loc = window.location
 let wsStart = 'ws://'
 
-if(loc.protocol === 'https') {
+if (loc.protocol === 'https') {
     wsStart = 'wss://'
 }
 let endpoint = wsStart + loc.host + loc.pathname
 
 var socket = new WebSocket(endpoint)
 
-socket.onopen = async function(e){
+socket.onopen = async function (e) {
     console.log('open', e)
-    send_message_form.on('submit', function (e){
+    send_message_form.on('submit', function (e) {
         e.preventDefault()
         let message = input_message.val()
         let send_to = get_active_other_user_id()
@@ -33,7 +33,7 @@ socket.onopen = async function(e){
     })
 }
 
-socket.onmessage = async function(e){
+socket.onmessage = async function (e) {
     console.log('message', e)
     let data = JSON.parse(e.data)
     let message = data['message']
@@ -42,23 +42,22 @@ socket.onmessage = async function(e){
     newMessage(message, sent_by_id, thread_id)
 }
 
-socket.onerror = async function(e){
+socket.onerror = async function (e) {
     console.log('error', e)
 }
 
-socket.onclose = async function(e){
+socket.onclose = async function (e) {
     console.log('close', e)
 }
 
-
 function newMessage(message, sent_by_id, thread_id) {
-	if ($.trim(message) === '') {
-		return false;
-	}
-	let message_element;
-	let chat_id = 'chat_' + thread_id
-	if(sent_by_id == USER_ID){
-	    message_element = `
+    if ($.trim(message) === '') {
+        return false;
+    }
+    let message_element;
+    let chat_id = 'chat_' + thread_id
+    if (sent_by_id == USER_ID) {
+        message_element = `
         <ul class="m-b-0">
           <li class="clearfix">
             <div class="message other-message float-right">
@@ -67,9 +66,8 @@ function newMessage(message, sent_by_id, thread_id) {
           </li>
         </ul>
 	    `
-    }
-	else{
-	    message_element = `
+    } else {
+        message_element = `
         <ul class="m-b-0">
           <li class="clearfix">
             <div class="message my-message">
@@ -81,15 +79,14 @@ function newMessage(message, sent_by_id, thread_id) {
     }
 
     let message_body = $('.messages-wrapper[chat-id="' + chat_id + '"] .chat-history')
-	message_body.append($(message_element))
+    message_body.append($(message_element))
     message_body.animate({
-        scrollTop: $(document).height()
+        scrollTop: message_body[0].scrollHeight
     }, 100);
-	input_message.val(null);
+    input_message.val(null);
 }
 
-
-$('.contact-li').on('click', function (){
+$('.contact-li').on('click', function () {
     $('.contact-li.active').removeClass('active');
     $(this).addClass('active')
 
@@ -97,18 +94,25 @@ $('.contact-li').on('click', function (){
     let chat_id = $(this).attr('chat-id')
 
     $('.messages-wrapper.is_active').removeClass('is_active')
-    $('.messages-wrapper[chat-id="' + chat_id +'"]').addClass('is_active')
-
+    $('.messages-wrapper[chat-id="' + chat_id + '"]').addClass('is_active')
+    // when switch btw chats
+    scrollToBottom($('.messages-wrapper.is_active .chat-history'));
 })
 
-function get_active_other_user_id(){
+function get_active_other_user_id() {
     let other_user_id = $('.messages-wrapper.is_active').attr('other-user-id')
     other_user_id = $.trim(other_user_id)
     return other_user_id
 }
 
-function get_active_thread_id(){
+function get_active_thread_id() {
     let chat_id = $('.messages-wrapper.is_active').attr('chat-id')
     let thread_id = chat_id.replace('chat_', '')
     return thread_id
+}
+
+// when load
+scrollToBottom($('.messages-wrapper.is_active .chat-history'));  // chat-history inside the active chat
+function scrollToBottom(element) {
+    element.scrollTop(element[0].scrollHeight); // first DOM element
 }

@@ -82,7 +82,7 @@
                   </div>
                 </div>
                 
-                <div class="chat-history">
+                <div class="chat-history" id="chat-history">
                 <ul class="m-b-0">
                 {% for chat in thread.chatmessage_thread.all %}
                   {% if chat.user == user %}
