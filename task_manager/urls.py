@@ -22,11 +22,11 @@ from task_manager.views import (
     PositionDetailView,
     PositionUpdateView,
     PositionDeleteView,
-    task_completed,
     task_not_completed,
     complete_task,
     registration,
     TaskCompletedView,
+    UserLoginView,
 )
 
 urlpatterns = [
@@ -70,6 +70,8 @@ urlpatterns = [
         PositionDeleteView.as_view(),
         name="position-delete",
     ),
+    # Authentication
+    path("accounts/login/", UserLoginView.as_view(), name="login"),
     path("accounts/register/", registration, name="register"),
 ]
 

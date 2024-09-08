@@ -113,7 +113,8 @@
             <a href="{% url 'logout' %}" class="dropdown-item">
               <i class="dropdown-item-icon mdi mdi-power text-primary me-2"></i>Sign Out</a>
           {% else %}
-            <a href="{% url 'login' %}" class="dropdown-item">
+{#            it's my own path, bc of task_manager:..#}
+            <a href="{% url 'task_manager:login' %}" class="dropdown-item">
               <i class="dropdown-item-icon mdi mdi-login text-primary me-2"></i>Sign IN</a>
           {% endif %}
         </div>

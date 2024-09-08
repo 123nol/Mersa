@@ -1,3 +1,5 @@
+from admin_star.forms import LoginForm
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
@@ -266,3 +268,9 @@ def registration(request):
 
     context = {"form": form}
     return render(request, "accounts/register.html", context)
+
+
+class UserLoginView(auth_views.LoginView):
+    template_name = "accounts/login.html"
+    form_class = LoginForm
+    success_url = "/"
