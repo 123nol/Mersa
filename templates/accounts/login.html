@@ -1,0 +1,55 @@
+{% load static %}
+{% load allauth socialaccount %}
+{% get_providers as socialaccount_providers %}
+
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login Form</title>
+  <link rel="stylesheet" href="{% static 'css/login.css' %}">
+
+</head>
+<body>
+<div class="login_form">
+  <form class="pt-3" method="post">
+    {% csrf_token %}
+
+    <h3>Log in with</h3>
+      {% block sso %}
+
+      {% include 'includes/sso.html' %}
+
+    {% endblock sso %}
+
+    {% if form.non_field_errors %}
+      {% for error in form.non_field_errors %}
+        <small class="text-danger">{{ error }}</small>
+      {% endfor %}
+    {% endif %}
+
+    {% for field in form %}
+      <div class="input_box">
+        <label for="{{ field.id_for_label }}">{{ field.label.text }}</label>
+
+        {% if field.name == 'password' %}
+          <a href="{% url 'password_reset' %}" class="auth-link text-black">Forgot password?</a>
+        {% endif %}
+        {{ field }}
+      </div>
+      <small class="text-danger">{{ field.errors }}</small>
+    {% endfor %}
+    <button type="submit">Log In</button>
+
+    <p class="sign_up">Don't have an account? <a href="{% url 'task_manager:register' %}">Sign up</a></p>
+    {#    !#}
+    <div class="my-2 d-flex justify-content-between align-items-center">
+      <div class="form-check">
+        <label class="form-check-label text-muted">
+          <input type="checkbox" class="form-check-input">
+          Keep me signed in
+        </label>
+      </div>
+    </div>
+    {#    !#}
+  </form>
+</div>
