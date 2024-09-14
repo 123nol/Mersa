@@ -31,10 +31,10 @@
             <div class="option">
               {% provider_login_url provider process=process scope=scope auth_params=auth_params as href %}
               <a href="{{ href }}">
-                <img src="{% static 'images/logos/google.png' %}" alt="{{ provider.name }}"/>
+                <img src="{% static 'images/logos/'|add:provider.name|lower|add:'.png' %}" alt="{{ provider.name }}"/>
                 <span>{{ provider.name }}</span>
               </a>
-            </div>
+{#            </div>#}
           </div>
         {% endfor %}
       {% endelement %}

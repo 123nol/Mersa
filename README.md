@@ -2,10 +2,11 @@
 
 (the first page loading is a bit long, be patient)
 
-I decided to implement my own Task Manager, which will handle all 
-    possible problems during product development in my team. 
-    Everyone from the team can create tasks, assign these tasks to team members,
-    and mark the tasks as done.
+Facilitates project management by creating tasks, monitoring the team using the developed logic in Django 
+(Everyone from the team can create tasks, assign these tasks to team members,
+and mark the tasks as done). 
+Live chat is created using WebSockets.
+SSO authentication with Google and GitHub to log in.
 
 ## Table of Contents
 
@@ -63,7 +64,9 @@ Password: ```rA$`3?590#<>```
 - total visitors counter
 - add search (for all sections??)
 - 
-- chat with web-sockets
+- ~~chat with web-sockets~~
+- CI/CD
+- SSO to Register page ()
 </details>
 
 <details style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px">
@@ -76,9 +79,9 @@ Password: ```rA$`3?590#<>```
 - add checkbox for tasks in the main task-list page (and save with js??)
 - placeholder to fields in forms
 - bigger font size?
-- title
-- json file with data 
-- add tests
+- ~~title~~
+- ~~json file with data~~ 
+- ~~add tests~~
 - in profile tab, if haven't email or name info - write it
 - if in index todo not tasks - show it
 - when create - show also position, not only username

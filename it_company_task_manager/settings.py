@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.github",
 ]
 
 SITE_ID = 1
@@ -118,7 +119,14 @@ SOCIALACCOUNT_PROVIDERS = {
             "secret": os.environ.get("SECRET"),
             "key": "",
         }
-    }
+    },
+    "github": {
+        "APP": {
+            "client_id": os.environ.get("GITHUB_CLIENT_ID"),
+            "secret": os.environ.get("GITHUB_SECRET"),
+            "key": "",
+        }
+    },
 }
 
 WSGI_APPLICATION = "it_company_task_manager.wsgi.application"

@@ -18,7 +18,6 @@ body {
 
 body {
     width: 100%;
-    min-height: 100vh;
     padding: 0 10px;
     display: flex;
     background: #626cd6;
@@ -50,7 +49,7 @@ body {
 }
 
 .login_form .login_option .option {
-    width: calc(100% / 2 - 12px);
+    width: calc(100% / 2 - 22px);
 }
 
 .login_form .login_option .option a {
