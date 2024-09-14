@@ -15,34 +15,11 @@
     {% csrf_token %}
 
     <h3>Log in with</h3>
+      {% block sso %}
 
-    {% if socialaccount_providers %}
-      {% element provider_list %}
-        {% for provider in socialaccount_providers %}
-          {% if provider.id == "openid" %}
-            {% for brand in provider.get_brands %}
-              {% provider_login_url provider openid=brand.openid_url process=process as href %}
-              {% element provider name=brand.name provider_id=provider.id href=href %}
-              {% endelement %}
-            {% endfor %}
-          {% endif %}
-          {#          OAuth Providers: google, ...#}
-          <div class="login_option">
-            <div class="option">
-              {% provider_login_url provider process=process scope=scope auth_params=auth_params as href %}
-              <a href="{{ href }}">
-                <img src="{% static 'images/logos/'|add:provider.name|lower|add:'.png' %}" alt="{{ provider.name }}"/>
-                <span>{{ provider.name }}</span>
-              </a>
-{#            </div>#}
-          </div>
-        {% endfor %}
-      {% endelement %}
-    {% endif %}
-    <!-- Login option separator -->
-    <p class="separator">
-      <span>or</span>
-    </p>
+      {% include 'includes/sso.html' %}
+
+    {% endblock sso %}
 
     {% if form.non_field_errors %}
       {% for error in form.non_field_errors %}

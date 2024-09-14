@@ -1,45 +1,22 @@
 {% extends 'layouts/auth_base.html' %}
 {% load static %}
-{% load allauth socialaccount %}
 
 {% block content %}
-{% get_providers as socialaccount_providers %}
+
 
   <div class="brand-logo">
 {#    <img src="{% static 'images/logo.svg' %}" alt="logo">#}
 {#  </div>#}
-  <h3>Sign in to continue.</h3>
+  
+  <h3>Sign up to continue.</h3>
   <form class="pt-3" method="post">
     {% csrf_token %}
 
-    {% if socialaccount_providers %}
-      {% element provider_list %}
-        {% for provider in socialaccount_providers %}
-          {% if provider.id == "openid" %}
-            {% for brand in provider.get_brands %}
-              {% provider_login_url provider openid=brand.openid_url process=process as href %}
-              {% element provider name=brand.name provider_id=provider.id href=href %}
-              {% endelement %}
-            {% endfor %}
-          {% endif %}
-          {#          OAuth Providers: google, ...#}
-          <div class="login_option">
-            <div class="option">
-              {% provider_login_url provider process=process scope=scope auth_params=auth_params as href %}
-              <a href="{{ href }}">
-                <img src="{% static 'images/logos/'|add:provider.name|lower|add:'.png' %}" alt="{{ provider.name }}"/>
-                <span>{{ provider.name }}</span>
-              </a>
-{#            </div>#}
-          </div>
-        {% endfor %}
-      {% endelement %}
-    {% endif %}
-    <p class="separator">
-      <span>or</span>
-    </p>
+    {% block sso %}
 
+      {% include 'includes/sso.html' %}
 
+    {% endblock sso %}
 
     {% for field in form %}
       <div class="form-group">
