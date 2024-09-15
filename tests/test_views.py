@@ -17,7 +17,7 @@ class PublicWorkerTest(TestCase):
 
     def test_login_required(self):
         resp = self.client.get(WORKER_URL)
-        self.assertNotEquals(resp.status_code, 200)
+        self.assertNotEqual(resp.status_code, 200)
 
 
 class PrivateManufacturerTest(TestCase):
