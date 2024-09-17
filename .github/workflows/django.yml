@@ -1,0 +1,27 @@
+name: Run Tests
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'  # Змініть версію на доступну
+
+      - name: Install lsb-release
+        run: sudo apt-get update && sudo apt-get install -y lsb-release
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: |
+          python -m unittest discover
