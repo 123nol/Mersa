@@ -1,4 +1,4 @@
-# IT Company Task Manager (https://it-company-task-manager-pt9n.onrender.com/)
+# Mersa
 
 (the first page loading is a bit long, be patient)
 
