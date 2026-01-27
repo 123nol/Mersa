@@ -124,6 +124,30 @@ def index(request):
 
     return render(request, "task_manager/index.html", context)
 
+
+@login_required
+def my_profile(request):
+    # Render a profile page for the logged-in user using the same site styling.
+    user = request.user
+    # try to fetch memberships and active tasks; be tolerant of missing related data
+    memberships = []
+    active_tasks = Task.objects.none()
+    try:
+        memberships = user.workspace_memberships.select_related('workspace').all()
+    except Exception:
+        memberships = []
+    try:
+        active_tasks = Task.objects.filter(assignees=user, is_completed=False).select_related('task_type', 'workspace').prefetch_related('assignees', 'attachments')
+    except Exception:
+        active_tasks = Task.objects.none()
+
+    context = {
+        'worker': user,
+        'memberships': memberships,
+        'active_tasks': active_tasks,
+    }
+    return render(request, 'task_manager/my_profile.html', context)
+
 class WorkerListView(LoginRequiredMixin, generic.ListView):
     model = Worker
     paginate_by = 5
@@ -153,6 +177,17 @@ class WorkerCreateView(LoginRequiredMixin, generic.CreateView):
 class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
     model = Worker
     queryset = Worker.objects.select_related("position")
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        worker = self.object
+        # Workspaces and role in each workspace
+        memberships = worker.workspace_memberships.select_related('workspace').all()
+        context['memberships'] = memberships
+        # Active tasks assigned to the worker (include task_type and workspace)
+        active_tasks = Task.objects.filter(assignees=worker, is_completed=False).select_related('task_type', 'workspace').prefetch_related('assignees', 'attachments')
+        context['active_tasks'] = active_tasks
+        return context
 
 
 class WorkerUpdateView(LoginRequiredMixin, generic.UpdateView):

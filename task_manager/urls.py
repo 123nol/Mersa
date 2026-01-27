@@ -26,6 +26,7 @@ from task_manager.views import (
     task_not_completed,
     complete_task,
     registration,
+    my_profile,
     TaskCompletedView,
 )
 from task_manager.views import add_to_google_calendar
@@ -73,6 +74,7 @@ urlpatterns = [
         name="position-delete",
     ),
     path("accounts/register/", registration, name="register"),
+    path("accounts/profile/", my_profile, name="my-profile"),
     path("tasks/<int:task_id>/google-calendar/", add_to_google_calendar, name="task-google-calendar"),
     # Workspace URLs
     path('workspaces/', workspace_views.workspace_list, name='workspace-list'),

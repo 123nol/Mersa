@@ -90,25 +90,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "it_company_task_manager.wsgi.application"
 
-
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
+# Default (fallback) database config
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-        # fix ChannelLiveServerTestCase can't be used with in memory databases
-        # (sqlite in memory for test)
-        "TEST": {
-            "NAME": BASE_DIR / "db.sqlite3",
-        },
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "mersa_task_manager",
+        "USER": "mersa_user",
+        "PASSWORD": "local_password_here",
+        "HOST": "localhost",
+        "PORT": 5432,
     }
 }
 
-# this config checks if DATABASE_URL exists in this env
-db_from_env = dj_database_url.config(conn_max_age=500)
-# if exists - update
+# Override with DATABASE_URL if present (for production)
+db_from_env = dj_database_url.config(conn_max_age=600)
 DATABASES["default"].update(db_from_env)
 
 # Password validation
@@ -154,7 +149,7 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
+# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-fieldpy
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

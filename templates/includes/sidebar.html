@@ -74,7 +74,7 @@
         <!-- User Pages Dropdown/Section -->
         <div class="flex flex-col gap-1">
           {% if request.user.is_superuser %}
-            <a class="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition-all duration-200" href="{% url 'admin:password_change' %}">
+            <a class="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition-all duration-200" href="{% url 'password_change' %}">
               <span class="material-symbols-outlined text-[20px]">lock_reset</span>
               <p class="text-sm font-medium">Change Password</p>
             </a>
@@ -91,10 +91,13 @@
                 <span class="material-symbols-outlined text-[20px]">lock_reset</span>
                 <p class="text-sm font-medium">Change Password</p>
               </a>
-              <a class="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-red-500/20 hover:text-white rounded-lg transition-all duration-200" href="{% url 'logout' %}">
-                <span class="material-symbols-outlined text-[20px]">logout</span>
-                <p class="text-sm font-medium">Logout</p>
-              </a>
+              <form action="{% url 'logout' %}" method="post" class="px-3 mt-2">
+                {% csrf_token %}
+                <button type="submit" class="w-full flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-red-500/20 hover:text-white rounded-lg transition-all duration-200 bg-transparent border-0 text-left">
+                  <span class="material-symbols-outlined text-[20px]">logout</span>
+                  <p class="text-sm font-medium">Logout</p>
+                </button>
+              </form>
             {% else %}
               <a class="flex items-center gap-3 px-3 py-2 text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition-all duration-200" href="{% url 'login' %}">
                 <span class="material-symbols-outlined text-[20px]">login</span>
