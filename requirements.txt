@@ -54,5 +54,5 @@ zope.interface==6.4.post2
 
 ## Developer / test extras
 pytest==7.4.2
-pytest-django==4.6.3
+pytest-django==4.6.0,<5
 coverage==7.3.1
