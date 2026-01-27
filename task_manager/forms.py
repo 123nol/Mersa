@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 
-from task_manager.models import Worker, Task
+from task_manager.models import Worker, Task, Workspace, WorkspaceMembership
 
 from task_manager.models import Attachment
 
@@ -27,8 +27,18 @@ class TaskForm(forms.ModelForm):
     )
 
     def __init__(self, *args, **kwargs):
+        # accept `user` kwarg to scope workspace choices
+        user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         self.fields["is_completed"].widget.attrs["disabled"] = True
+        if 'workspace' in self.fields:
+            if user is not None:
+                # allow only workspaces where user is at least MEMBER
+                allowed_roles = ['ADMIN', 'MANAGER', 'MEMBER']
+                self.fields['workspace'].queryset = Workspace.objects.filter(memberships__user=user, memberships__role__in=allowed_roles).distinct()
+            else:
+                # default to no choices if no user provided
+                self.fields['workspace'].queryset = Workspace.objects.none()
 
     class Meta:
         model = Task

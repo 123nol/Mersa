@@ -28,10 +28,12 @@ from task_manager.views import (
     registration,
     TaskCompletedView,
 )
+from task_manager.views import add_to_google_calendar
+from task_manager import workspace_views
 
 urlpatterns = [
     path("", index, name="index"),
-    path("workers/", WorkerListView.as_view(), name="worker-list"),
+    # worker list removed (access via workspaces)
     path("workers/create/", WorkerCreateView.as_view(), name="worker-create"),
     path("workers/<int:pk>/", WorkerDetailView.as_view(), name="worker-detail"),
     path("workers/<int:pk>/update/", WorkerUpdateView.as_view(), name="worker-update"),
@@ -57,7 +59,7 @@ urlpatterns = [
         TaskTypeDeleteView.as_view(),
         name="task_type-delete",
     ),
-    path("positions/", PositionListView.as_view(), name="position-list"),
+    # positions list removed (managed via admin or workspace roles)
     path("positions/create/", PositionCreateView.as_view(), name="position-create"),
     path("positions/<int:pk>/", PositionDetailView.as_view(), name="position-detail"),
     path(
@@ -71,6 +73,15 @@ urlpatterns = [
         name="position-delete",
     ),
     path("accounts/register/", registration, name="register"),
+    path("tasks/<int:task_id>/google-calendar/", add_to_google_calendar, name="task-google-calendar"),
+    # Workspace URLs
+    path('workspaces/', workspace_views.workspace_list, name='workspace-list'),
+    path('workspaces/create/', workspace_views.workspace_create, name='workspace-create'),
+    path('workspaces/<int:ws_id>/', workspace_views.workspace_detail, name='workspace-detail'),
+    path('workspaces/<int:ws_id>/add-member/', workspace_views.workspace_add_member, name='workspace-add-member'),
+    path('workspaces/<int:ws_id>/remove-member/<int:user_id>/', workspace_views.workspace_remove_member, name='workspace-remove-member'),
+    path('workspaces/<int:ws_id>/change-role/<int:user_id>/', workspace_views.workspace_change_role, name='workspace-change-role'),
+    path('workspaces/<int:ws_id>/delete/', workspace_views.workspace_delete, name='workspace-delete'),
 ]
 
 app_name = "task_manager"

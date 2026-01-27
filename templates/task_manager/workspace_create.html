@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Create Workspace</h2>
+<form method="post">{% csrf_token %}
+  <label for="name">Workspace Name:</label>
+  <input type="text" name="name" id="name" required><br>
+  <button type="submit" class="btn btn-success">Create</button>
+</form>
+<a href="{% url 'task_manager:workspace-list' %}">Back to Workspaces</a>
+{% endblock %}

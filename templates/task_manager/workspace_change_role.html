@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Change Role for {{ member.user.username }} in {{ workspace.name }}</h2>
+<form method="post">{% csrf_token %}
+  <label for="role">Role:</label>
+  <select name="role" id="role">
+    <option value="ADMIN" {% if member.role == 'ADMIN' %}selected{% endif %}>Admin</option>
+    <option value="MANAGER" {% if member.role == 'MANAGER' %}selected{% endif %}>Manager</option>
+    <option value="MEMBER" {% if member.role == 'MEMBER' %}selected{% endif %}>Member</option>
+    <option value="VIEWER" {% if member.role == 'VIEWER' %}selected{% endif %}>Viewer</option>
+  </select><br>
+  <button type="submit" class="btn btn-success">Change Role</button>
+</form>
+<a href="{% url 'task_manager:workspace-detail' workspace.id %}">Back to Workspace</a>
+{% endblock %}

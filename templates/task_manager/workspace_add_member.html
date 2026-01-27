@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Add Member to {{ workspace.name }}</h2>
+<form method="post">{% csrf_token %}
+  <label for="username">User:</label>
+  <select name="username" id="username">
+    {% for user in users %}
+      <option value="{{ user.username }}">{{ user.username }}</option>
+    {% endfor %}
+  </select><br>
+  <label for="role">Role:</label>
+  <select name="role" id="role">
+    <option value="ADMIN">Admin</option>
+    <option value="MANAGER">Manager</option>
+    <option value="MEMBER">Member</option>
+    <option value="VIEWER">Viewer</option>
+  </select><br>
+  <button type="submit" class="btn btn-success">Add</button>
+</form>
+<a href="{% url 'task_manager:workspace-detail' workspace.id %}">Back to Workspace</a>
+{% endblock %}

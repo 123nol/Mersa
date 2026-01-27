@@ -15,16 +15,21 @@
     </li>
     <li class="nav-item">
       <a class="nav-link"
-         href="{% url 'task_manager:worker-list' %}">
-        <i class="menu-icon mdi mdi-file-document"></i>
-        <span class="menu-title">All workers</span>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link"
          href="{% url 'task_manager:task-list' %}">
         <i class="menu-icon mdi mdi-rocket text-danger"></i>
         <span class="menu-title fw-bold">All tasks</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'task_manager:workspace-list' %}">
+        <i class="menu-icon mdi mdi-folder-multiple-outline"></i>
+        <span class="menu-title">Workspaces</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'task_manager:workspace-create' %}">
+        <i class="menu-icon mdi mdi-plus-box"></i>
+        <span class="menu-title">Create Workspace</span>
       </a>
     </li>
     <li class="nav-item">
@@ -34,13 +39,7 @@
         <span class="menu-title">Task types</span>
       </a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link"
-         href="{% url 'task_manager:position-list' %}">
-        <i class="menu-icon mdi mdi-file-document"></i>
-        <span class="menu-title fw-bold">Positions</span>
-      </a>
-    </li>
+    <!-- Workers and Positions links removed (RBAC via Workspaces) -->
     <li class="nav-item">
       <a class="nav-link"
          href="{% url 'chat:messages_page' %}">

@@ -8,8 +8,8 @@
     <ul style="font-size: 17px" class="list-group list-group-flush list-group-item-action">
       {% for task in task_list %}
         <li class="list-group-item list-group-item-action">
-          <a href="{% url 'task_manager:task-detail' pk=task.pk %}">{{ task.pk }}.</a>
-          {{ task }}
+          <a href="{% url 'task_manager:task-detail' pk=task.pk %}">{{ task.name }}</a>
+          <div class="small text-muted">Assigned to: {% for u in task.assignees.all %}{{ u.get_full_name|default:u.username }}{% if not forloop.last %}, {% endif %}{% endfor %}</div>
         </li>
       {% endfor %}
     </ul>

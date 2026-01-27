@@ -1,3 +1,9 @@
+## Python package requirements for Mersa task manager
+## Notes:
+## - Front-end assets used by the app (Chart.js, ProgressBar.js) are included under `static/`.
+##   If you prefer CDN delivery, edit `templates/task_manager/index.html` to reference CDN URLs.
+## - Migration order matters for the Workspace backfill; run `py manage.py migrate` after pulling.
+
 asgiref==3.8.1
 attrs==23.2.0
 autobahn==23.6.2
@@ -11,7 +17,8 @@ crispy-bootstrap4==2024.1
 cryptography==43.0.0
 daphne==4.1.2
 dj-database-url==2.1.0
-Django==5.0.4
+# Use Django 5.2.x for compatibility with generated migrations
+Django>=5.2.8,<6
 django-admin-star==1.0.4
 django-crispy-forms==2.1
 django-debug-toolbar==4.4.6
@@ -44,3 +51,8 @@ typing_extensions==4.11.0
 uvicorn==0.29.0
 whitenoise==6.6.0
 zope.interface==6.4.post2
+
+## Developer / test extras
+pytest==7.4.2
+pytest-django==4.6.3
+coverage==7.3.1

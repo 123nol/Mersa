@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Workspace: {{ workspace.name }}</h2>
+<p>Created by: {{ workspace.created_by }}</p>
+<h3>Members</h3>
+<ul>
+  {% for member in members %}
+    <li>{{ member.user.username }} ({{ member.role }})
+      {% if request.user == workspace.created_by or member.role != 'ADMIN' %}
+        <a href="{% url 'task_manager:workspace-change-role' workspace.id member.user.id %}">Change Role</a>
+        <a href="{% url 'task_manager:workspace-remove-member' workspace.id member.user.id %}">Remove</a>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+<a href="{% url 'task_manager:workspace-add-member' workspace.id %}" class="btn btn-secondary">Add Member</a>
+  {% if request.user == workspace.created_by %}
+    <form method="post" action="{% url 'task_manager:workspace-delete' workspace.id %}" style="display:inline;">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Delete Workspace</button>
+    </form>
+  {% endif %}
+<h3>Tasks</h3>
+<ul>
+  {% for task in tasks %}
+    <li>{{ task.name }} ({{ task.assignees.all|join:", " }})</li>
+  {% empty %}
+    <li>No tasks in this workspace.</li>
+  {% endfor %}
+</ul>
+<a href="{% url 'task_manager:workspace-list' %}">Back to Workspaces</a>
+{% endblock %}

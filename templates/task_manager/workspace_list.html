@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Workspaces</h2>
+<ul>
+  {% for membership in memberships %}
+    <li>
+      <a href="{% url 'task_manager:workspace-detail' membership.workspace.id %}">{{ membership.workspace.name }}</a>
+      (role: {{ membership.role }})
+    </li>
+  {% empty %}
+    <li>No workspaces.</li>
+  {% endfor %}
+</ul>
+<a href="{% url 'task_manager:workspace-create' %}" class="btn btn-primary">Create Workspace</a>
+{% endblock %}
