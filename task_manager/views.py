@@ -12,7 +12,7 @@ from task_manager.forms import (
     TaskSearchForm,
     WorkerSearchForm,
 )
-from task_manager.models import Worker, Task, TaskType, Position, google_calendar_url
+from task_manager.models import Workspace, Worker, Task, TaskType, Position, google_calendar_url
 from django.http import HttpResponseBadRequest
 from django.utils import timezone
 def add_to_google_calendar(request, task_id):
@@ -28,37 +28,41 @@ def add_to_google_calendar(request, task_id):
 
 
 def index(request):
-    # basic user and visit tracking
+    # --- Initialization (Prevents UnboundLocalError) ---
     res = Worker.objects.count()
     num_visits = request.session.get("num_visits", 0)
     request.session["num_visits"] = num_visits + 1
-    # persist per-user visits for cross-user comparisons
+    
+    my_visits = 0
+    total_visits_ws = 0
+    visitors_percentage = 0
+    # Now Workspace is imported at the top of the file, so this won't crash:
+    user_workspaces = Workspace.objects.none() 
+    
+    # persist per-user visits
     if request.user.is_authenticated:
         try:
             user_obj = Worker.objects.get(pk=request.user.pk)
             user_obj.visit_count = (user_obj.visit_count or 0) + 1
             user_obj.save(update_fields=['visit_count'])
+            my_visits = user_obj.visit_count
         except Worker.DoesNotExist:
             pass
 
     name = request.GET.get("name", "")
 
-    # Determine workspaces the current user can act on (memberships: ADMIN/MANAGER/MEMBER/VIEWER)
-    from task_manager.models import Workspace
     if request.user.is_authenticated:
         user_workspaces = Workspace.objects.filter(memberships__user=request.user).distinct()
-    else:
-        user_workspaces = Workspace.objects.none()
 
     # Core task metrics scoped to user's workspaces
     total_tasks = Task.objects.filter(workspace__in=user_workspaces).count()
     closed_task_counter = Task.objects.filter(workspace__in=user_workspaces, is_completed=True).count()
     open_tasks = Task.objects.filter(workspace__in=user_workspaces, is_completed=False).count()
-    # overdue: has deadline before today and not completed
+    
     today = timezone.now().date()
     overdue_count = Task.objects.filter(workspace__in=user_workspaces, is_completed=False, deadline__lt=today).count()
 
-    # Performance chart: tasks created and tasks closed per day (last 14 days)
+    # Performance chart
     from datetime import timedelta
     days = 7
     labels = []
@@ -72,70 +76,53 @@ def index(request):
         created_series.append(created)
         closed_series.append(closed)
 
-    # Status distribution for small chart
     status_distribution = {
         'closed': closed_task_counter,
         'open': open_tasks,
         'overdue': overdue_count,
     }
 
-    # Visitors percentage: compare this user's visit_count to sum of visit_count of users in same workspaces
-    visitors_percentage = 0
+    # Visitors percentage calculation
     if request.user.is_authenticated and user_workspaces.exists():
         from django.db.models import Sum
         users_in_ws = Worker.objects.filter(workspace_memberships__workspace__in=user_workspaces).distinct()
         total_visits_ws = users_in_ws.aggregate(total=Sum('visit_count'))['total'] or 0
-        try:
-            my_visits = Worker.objects.get(pk=request.user.pk).visit_count or 0
-        except Worker.DoesNotExist:
-            my_visits = 0
         if total_visits_ws > 0:
             visitors_percentage = int(my_visits * 100.0 / total_visits_ws)
 
-    # Todo list: tasks assigned to the user, incomplete, upcoming
     if request.user.is_authenticated:
         todo_items = Task.objects.filter(workspace__in=user_workspaces, assignees=request.user, is_completed=False).order_by('deadline')[:6]
     else:
         todo_items = Task.objects.none()
 
-    # last task for preview
     last_task = Task.objects.filter(workspace__in=user_workspaces).order_by('-created_at').first()
 
     context = {
         "ind": res,
-        "num_visits": num_visits + 1,
+        "num_visits": num_visits,
         "total_tasks": total_tasks,
         "closed_task_counter": closed_task_counter,
         "open_tasks": open_tasks,
         "overdue_count": overdue_count,
-        "performance_labels": labels,
-        "performance_created": created_series,
-        "performance_closed": closed_series,
-        "status_distribution": status_distribution,
-        "todo_items": todo_items,
-            "today": today,
         "performance_labels_json": __import__('json').dumps(labels),
         "performance_created_json": __import__('json').dumps(created_series),
         "performance_closed_json": __import__('json').dumps(closed_series),
         "status_distribution_json": __import__('json').dumps(status_distribution),
         "visitors_percentage": visitors_percentage,
-        "visitors_total": total_visits_ws if request.user.is_authenticated and user_workspaces.exists() else 0,
-        "my_visits": my_visits if request.user.is_authenticated else 0,
+        "visitors_total": total_visits_ws,
+        "my_visits": my_visits,
+        "todo_items": todo_items,
+        "today": today,
         "search_form": TaskSearchForm(initial={"name": name}),
         "last_task": last_task,
     }
 
     if name:
-        queryset = Task.objects.all()
-        task_list = queryset.filter(name__icontains=name)
-
+        task_list = Task.objects.filter(name__icontains=name)
         context["task_list"] = task_list
-        return render(
-            request, template_name="task_manager/task_list.html", context=context
-        )
+        return render(request, "task_manager/task_list.html", context)
 
-    return render(request, template_name="task_manager/index.html", context=context)
-
+    return render(request, "task_manager/index.html", context)
 
 class WorkerListView(LoginRequiredMixin, generic.ListView):
     model = Worker
