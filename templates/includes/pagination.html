@@ -1,18 +1,38 @@
 {% load query_transform %}
+
 {% if is_paginated %}
-  <ul class="pagination">
+  <nav class="flex items-center justify-center gap-2 mt-8 py-4">
+    
+    <!-- Previous Page -->
     {% if page_obj.has_previous %}
-      <li class="page-item">
-        <a href="?{% query_transform request page=page_obj.previous_page_number %}" class="page-link">prev</a>
-      </li>
+      <a href="?{% query_transform request page=page_obj.previous_page_number %}" 
+         class="h-10 w-10 flex items-center justify-center glassmorphism rounded-lg text-gray-300 hover:bg-indigo-600 hover:text-white transition-all duration-200 group">
+        <span class="material-symbols-outlined">chevron_left</span>
+      </a>
+    {% else %}
+      <div class="h-10 w-10 flex items-center justify-center glassmorphism rounded-lg text-gray-600 cursor-not-allowed opacity-50">
+        <span class="material-symbols-outlined">chevron_left</span>
+      </div>
     {% endif %}
-    <li class="page-item active">
-      <span class="page-link">{{ page_obj.number }} of {{ paginator.num_pages }}</span>
-    </li>
+
+    <!-- Current Page Indicator -->
+    <div class="px-4 h-10 flex items-center justify-center glassmorphism rounded-lg border-indigo-500/30">
+      <span class="text-sm font-black text-white">
+        {{ page_obj.number }} <span class="text-gray-500 font-medium mx-1">of</span> {{ paginator.num_pages }}
+      </span>
+    </div>
+
+    <!-- Next Page -->
     {% if page_obj.has_next %}
-      <li class="page-item">
-        <a href="?{% query_transform request page=page_obj.next_page_number %}" class="page-link">next</a>
-      </li>
+      <a href="?{% query_transform request page=page_obj.next_page_number %}" 
+         class="h-10 w-10 flex items-center justify-center glassmorphism rounded-lg text-gray-300 hover:bg-indigo-600 hover:text-white transition-all duration-200 group">
+        <span class="material-symbols-outlined">chevron_right</span>
+      </a>
+    {% else %}
+      <div class="h-10 w-10 flex items-center justify-center glassmorphism rounded-lg text-gray-600 cursor-not-allowed opacity-50">
+        <span class="material-symbols-outlined">chevron_right</span>
+      </div>
     {% endif %}
-  </ul>
+
+  </nav>
 {% endif %}

@@ -1,13 +1,52 @@
 {% extends "base.html" %}
 {% load crispy_forms_filters %}
+
+{% block extrastyle %}
+<style>
+  /* Crispy Overrides for Dark Mode Glassmorphism */
+  input, select, textarea {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    border-radius: 0.75rem !important;
+    padding: 0.75rem !important;
+  }
+  input:focus { border-color: #6366f1 !important; outline: none !important; ring: 2px rgba(99, 102, 241, 0.2) !important; }
+  label { color: #9ca3af !important; font-size: 0.75rem !important; font-weight: 700 !important; text-transform: uppercase !important; margin-bottom: 0.5rem !important; }
+  .invalid-feedback { color: #f87171 !important; font-size: 0.75rem !important; }
+</style>
+{% endblock extrastyle %}
+
 {% block content %}
-  <h4 class="card-title">{{ object|yesno:"Update,Create" }} worker</h4>
-  <div class="form-group">
-    <form action="" method="post" class="forms-sample" novalidate>
+<div class="max-w-3xl mx-auto flex flex-col gap-6">
+  
+  <div class="flex items-center gap-4 border-b border-white/10 pb-6">
+    <div class="h-12 w-12 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+      <span class="material-symbols-outlined text-3xl">person_add</span>
+    </div>
+    <div>
+      <h2 class="text-2xl font-bold text-white">{{ object|yesno:"Update,Create" }} Worker Profile</h2>
+      <p class="text-sm text-gray-400">Manage personnel and access levels for Mersa/MMI.</p>
+    </div>
+  </div>
+
+  <div class="glassmorphism p-8 md:p-10 rounded-3xl">
+    <form action="" method="post" novalidate class="flex flex-col gap-6">
       {% csrf_token %}
-      {{ form|crispy }}
-      <input type="submit" class="btn btn-primary me-2">
-      <a href="{% url 'task_manager:worker-list' %}" class="btn btn-light">Cancel</a>
+      
+      <div class="grid grid-cols-1 gap-4">
+        {{ form|crispy }}
+      </div>
+
+      <div class="flex items-center gap-3 mt-4 pt-6 border-t border-white/10">
+        <button type="submit" class="px-10 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-indigo-500/20">
+          Save Profile
+        </button>
+        <a href="{% url 'task_manager:worker-list' %}" class="px-8 py-3 glassmorphism hover:bg-white/10 text-gray-300 rounded-xl font-bold transition-all">
+          Cancel
+        </a>
+      </div>
     </form>
   </div>
+</div>
 {% endblock %}

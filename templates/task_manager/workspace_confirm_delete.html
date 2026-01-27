@@ -1,9 +1,34 @@
 {% extends "base.html" %}
+
 {% block content %}
-  <h2>Delete Workspace: {{ workspace.name }}</h2>
-  <p>Are you sure you want to delete this workspace? This action cannot be undone.</p>
-  <form method="post">{% csrf_token %}
-    <button type="submit" class="btn btn-danger">Yes, delete</button>
-    <a href="{% url 'task_manager:workspace-detail' workspace.id %}" class="btn btn-secondary">Cancel</a>
-  </form>
+<div class="max-w-2xl mx-auto py-12">
+  
+  <div class="glassmorphism rounded-3xl overflow-hidden border-t-4 border-red-600/50">
+    <div class="p-8 md:p-12 flex flex-col items-center text-center">
+      
+      <div class="h-20 w-20 rounded-full bg-red-600/10 flex items-center justify-center text-red-500 mb-6 border border-red-500/20">
+        <span class="material-symbols-outlined text-5xl">delete_forever</span>
+      </div>
+
+      <h2 class="text-3xl font-black text-white mb-4">Destroy Workspace?</h2>
+      <p class="text-gray-400 text-lg mb-8 leading-relaxed">
+        You are about to delete the workspace: <br>
+        <span class="text-white font-bold text-2xl mt-2 block">"{{ workspace.name }}"</span> <br>
+        <span class="text-red-400/80 text-sm font-medium mt-4 block p-4 bg-red-500/5 rounded-xl border border-red-500/10">
+          Warning: This action is final. All member links, workspace-specific metadata, and configuration will be erased from MMI.
+        </span>
+      </p>
+
+      <form method="post" class="flex flex-col sm:flex-row items-center gap-4 w-full justify-center">
+        {% csrf_token %}
+        <button type="submit" class="w-full sm:w-auto px-12 py-3 bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold transition-all shadow-xl shadow-red-900/20">
+          Yes, Delete Workspace
+        </button>
+        <a href="{% url 'task_manager:workspace-detail' workspace.id %}" class="w-full sm:w-auto px-12 py-3 glassmorphism hover:bg-white/10 text-gray-300 rounded-xl font-bold transition-all text-center">
+          Cancel
+        </a>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}

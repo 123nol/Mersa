@@ -1,50 +1,90 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
-  <title>MMI Task management</title>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MMI Task Management</title>
+  
+  <!-- Scripts & Fonts -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
 
-<script>
-$(document).ready(function() {
-    // Simulate click on the button to collapse sidebar by default
-    $('#sidebarToggle').click();
-});
-</script>
+  <style>
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #1a237e 0%, #3949ab 30%, #5c6bc0 60%, #111521 100%);
+        height: 100vh;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .glassmorphism {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    }
+
+    /* Performance-friendly Animations */
+    @keyframes float {
+        0% { transform: translate(0, 0); }
+        50% { transform: translate(10px, 15px); }
+        100% { transform: translate(0, 0); }
+    }
+
+    .particle {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.05);
+        animation: float 20s ease-in-out infinite;
+        z-index: 0;
+    }
+  </style>
 
   {% load static %}
   {% include 'includes/styles.html' %}
   {% block extrastyle %}{% endblock extrastyle %}
+
+  <script>
+    $(document).ready(function() {
+        // Preserving your sidebar toggle logic
+        $('#sidebarToggle').click();
+    });
+  </script>
 </head>
-<body class="{% block body_class %}{% endblock %}">
-  <div class="container-scroller">
-    {% block navigation %}
 
-      {% include 'includes/navigation.html' %}
+<body class="text-white {% block body_class %}{% endblock %}">
+  
+  <!-- Background Decorative Particles -->
+  <div id="particle-field" class="fixed inset-0 pointer-events-none">
+    <div class="particle" style="width: 300px; height: 300px; top: 10%; left: 30%;"></div>
+    <div class="particle" style="width: 150px; height: 150px; top: 60%; left: 10%;"></div>
+    <div class="particle" style="width: 200px; height: 200px; top: 5%; left: 70%;"></div>
+  </div>
 
-    {% endblock navigation %}
-    <div class="container-fluid page-body-wrapper">
-      {% block sidebar %}
-
-        {% include 'includes/sidebar.html' %}
-
-      {% endblock sidebar %}
+  <div class="relative flex h-screen w-full overflow-hidden p-4">
     
-      <div class="main-panel">
-        <div class="content-wrapper">
-          <div class="row">
-            <div class="col-lg-12 stretch-card">
-              <div class="card">
-                <div class="card-body">
-                  {% block content %}{% endblock content %}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <!-- Sidebar Area -->
+    {% block sidebar %}
+      {% include 'includes/sidebar.html' %}
+    {% endblock sidebar %}
+
+    <!-- Main Panel -->
+    <div class="flex-1 flex flex-col min-w-0 ml-4">
+      
+      <!-- Top Navigation -->
+      {% block navigation %}
+        {% include 'includes/navigation.html' %}
+      {% endblock navigation %}
+
+      <!-- Main Content Scrollable Area -->
+      <main class="flex-1 mt-4 overflow-y-auto rounded-xl glassmorphism p-6 custom-scrollbar">
+        {% block content %}{% endblock content %}
+      </main>
+
     </div>
   </div>
 

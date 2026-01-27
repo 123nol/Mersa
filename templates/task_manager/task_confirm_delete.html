@@ -1,12 +1,44 @@
 {% extends "base.html" %}
+
 {% block content %}
-  <h4 class="card-title">Delete task?</h4>
-  <p class="card-description">
-    You are sure that you want to delete the task?
-  </p>
-  <form action="" method="post">
-    {% csrf_token %}
-    <input type="submit" value="Yes" class="btn btn-danger">
-    <a href="{% url 'task_manager:task-detail' pk=task.pk %}" class="btn btn-secondary">Back</a>
-  </form>
+<div class="max-w-2xl mx-auto py-12">
+  
+  <!-- Warning Card -->
+  <div class="glassmorphism rounded-3xl overflow-hidden border-t-4 border-red-500/50">
+    <div class="p-8 md:p-12 flex flex-col items-center text-center">
+      
+      <!-- Icon -->
+      <div class="h-20 w-20 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 mb-6 animate-pulse">
+        <span class="material-symbols-outlined text-5xl">warning</span>
+      </div>
+
+      <!-- Text Content -->
+      <h2 class="text-3xl font-black text-white mb-4">Confirm Deletion</h2>
+      <p class="text-gray-400 text-lg mb-8 leading-relaxed">
+        Are you sure you want to delete the task: <br>
+        <span class="text-white font-bold">"{{ task.name }}"</span>? <br>
+        <span class="text-red-400/80 text-sm font-medium mt-2 block">This action is permanent and cannot be undone.</span>
+      </p>
+
+      <!-- Form Actions -->
+      <form action="" method="post" class="flex flex-col sm:flex-row items-center gap-4 w-full justify-center">
+        {% csrf_token %}
+        
+        <button type="submit" class="w-full sm:w-auto px-10 py-3 bg-red-600 hover:bg-red-500 text-white rounded-xl font-bold transition-all shadow-xl shadow-red-900/20">
+          Yes, Delete Task
+        </button>
+
+        <a href="{% url 'task_manager:task-detail' pk=task.pk %}" class="w-full sm:w-auto px-10 py-3 glassmorphism hover:bg-white/10 text-gray-300 rounded-xl font-bold transition-all text-center">
+          No, Go Back
+        </a>
+      </form>
+
+    </div>
+
+    <!-- Bottom Accent -->
+    <div class="bg-red-500/5 py-3 text-center">
+      <p class="text-[10px] text-red-500/50 uppercase tracking-[0.2em] font-black">MMI Secure Protocols Active</p>
+    </div>
+  </div>
+</div>
 {% endblock %}

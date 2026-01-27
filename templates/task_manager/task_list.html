@@ -1,22 +1,71 @@
 {% extends "base.html" %}
+
 {% block content %}
-  <h4 class="card-title">List of all tasks:
-    <a href="{% url 'task_manager:task-create' %}" class="btn btn-primary link-to-page">Create</a>
-  </h4>
-  {% include "includes/task_state_buttons.html" %}
+<div class="flex flex-col gap-6">
+  
+  <!-- Header Section -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
+    <div class="flex items-center gap-3">
+      <div class="h-10 w-10 rounded-lg bg-indigo-500/20 flex items-center justify-center">
+        <span class="material-symbols-outlined text-indigo-400">task</span>
+      </div>
+      <div>
+        <h2 class="text-2xl font-bold text-white">All Tasks</h2>
+        <p class="text-gray-400 text-sm">Managing the global task queue for MMI</p>
+      </div>
+    </div>
+    <a href="{% url 'task_manager:task-create' %}" class="flex items-center gap-2 px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-indigo-500/20">
+      <span class="material-symbols-outlined text-sm">add_circle</span>
+      Create Task
+    </a>
+  </div>
+
+  <!-- Filter States (Include) -->
+  <div class="py-2">
+    {% include "includes/task_state_buttons.html" %}
+  </div>
+
+  <!-- Task List Container -->
   {% if task_list %}
-    <ul style="font-size: 17px" class="list-group list-group-flush list-group-item-action">
+    <div class="flex flex-col gap-3">
       {% for task in task_list %}
-        <li class="list-group-item list-group-item-action">
-          <a href="{% url 'task_manager:task-detail' pk=task.pk %}">{{ task.name }}</a>
-          <div class="small text-muted">Assigned to: {% for u in task.assignees.all %}{{ u.get_full_name|default:u.username }}{% if not forloop.last %}, {% endif %}{% endfor %}</div>
-        </li>
+        <div class="group glassmorphism bg-white/5 hover:bg-white/10 p-4 rounded-xl transition-all duration-200 border-none flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-indigo-500/20 transition-colors">
+              <span class="material-symbols-outlined text-gray-400 group-hover:text-indigo-400 text-lg">assignment</span>
+            </div>
+            <div class="flex flex-col">
+              <a href="{% url 'task_manager:task-detail' pk=task.pk %}" class="text-base font-semibold text-gray-200 group-hover:text-white transition-colors">
+                {{ task.name }}
+              </a>
+              <div class="flex items-center gap-2 mt-1">
+                <span class="material-symbols-outlined text-[14px] text-gray-500">group</span>
+                <span class="text-xs text-gray-400">
+                  Assigned to: 
+                  {% for u in task.assignees.all %}
+                    <span class="text-gray-300">{{ u.get_full_name|default:u.username }}</span>{% if not forloop.last %}, {% endif %}
+                  {% endfor %}
+                </span>
+              </div>
+            </div>
+          </div>
+          <span class="material-symbols-outlined text-gray-600 group-hover:text-white transition-colors">chevron_right</span>
+        </div>
       {% endfor %}
-    </ul>
-    {% block paginate %}
-      {% include 'includes/pagination.html' %}
-    {% endblock %}
-    {% else %}
-      <p>There are no tasks in the team.</p>
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-6">
+      {% block paginate %}
+        {% include 'includes/pagination.html' %}
+      {% endblock %}
+    </div>
+
+  {% else %}
+    <div class="glassmorphism p-12 rounded-xl text-center">
+      <span class="material-symbols-outlined text-5xl text-gray-600 mb-4">Inbox</span>
+      <p class="text-gray-400 italic">There are no tasks in the team at the moment.</p>
+    </div>
   {% endif %}
+</div>
 {% endblock %}

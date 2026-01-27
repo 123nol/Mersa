@@ -1,44 +1,131 @@
 {% extends "base.html" %}
+
 {% block content %}
-  <h4 class="card-title">Task detail page</h4>
+<div class="flex flex-col gap-6">
 
-  <p><strong>Name:</strong> {{ task.name }}</p>
-  <p><strong>Description:</strong> {{ task.description }}</p>
-  <p><strong>Start Date:</strong> {{ task.created_at|date:'m/d/Y' }}</p>
-  <p><strong>Deadline:</strong> {{ task.deadline|date:'m/d/Y' }}</p>
-  <p><strong>Is Completed:</strong> {{ task.is_completed }}</p>
-  <p><strong>Priority:</strong> {{ task.priority }}</p>
-  <p><strong>Type:</strong> {{ task.task_type }}</p>
-
-  <div class="p-2">
-    <p><strong>Assignees:</strong></p>
-    {% for assignees in task.assignees.all %}
-      <hr>
-      <p><strong>Username:</strong> {{ assignees.username }}</p>
-      <p><strong>Id:</strong> {{assignees.id}}</p>
-    {% empty %}
-      <p>No assignees!</p>
-    {% endfor %}
+  <!-- Header & Actions -->
+  <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-white/10 pb-6">
+    <div class="flex items-center gap-4">
+      <div class="h-12 w-12 rounded-xl bg-indigo-500/20 flex items-center justify-center">
+        <span class="material-symbols-outlined text-indigo-400 text-3xl">assignment</span>
+      </div>
+      <div>
+        <h2 class="text-3xl font-black text-white">{{ task.name }}</h2>
+        <div class="flex items-center gap-3 mt-1">
+          <span class="px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/10 text-indigo-300 border border-white/10">
+            {{ task.task_type }}
+          </span>
+          <span class="px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider 
+            {% if task.priority == 'HIGH' %} bg-red-500/20 text-red-400 border border-red-500/30 
+            {% elif task.priority == 'MEDIUM' %} bg-amber-500/20 text-amber-400 border border-amber-500/30 
+            {% else %} bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 {% endif %}">
+            {{ task.priority }} Priority
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="flex flex-wrap items-center gap-2">
+      <a href="{% url 'task_manager:task-complete' pk=task.pk %}" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-indigo-500/20 flex items-center gap-2">
+        <span class="material-symbols-outlined text-sm">{% if task.is_completed %}undo{% else %}check_circle{% endif %}</span>
+        Mark as {{ task.is_completed|yesno:"Incomplete,Complete" }}
+      </a>
+      {% if task.deadline %}
+        <a href="{% url 'task_manager:task-google-calendar' task_id=task.pk %}" class="px-4 py-2 glassmorphism hover:bg-white/10 text-white rounded-lg text-sm font-bold transition-all flex items-center gap-2">
+          <span class="material-symbols-outlined text-sm text-blue-400">calendar_add_on</span>
+          Google Calendar
+        </a>
+      {% endif %}
+    </div>
   </div>
 
-  <h5>Attachments:</h5>
-  {% if attachments %}
-    <ul>
-      {% for attachment in attachments %}
-        <li>
-          <a href="{{ attachment.file.url }}" target="_blank">{{ attachment.file.name|cut:'attachments/' }}</a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>No attachments.</p>
-  {% endif %}
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    
+    <!-- Left Column: Core Details -->
+    <div class="lg:col-span-2 flex flex-col gap-6">
+      <div class="glassmorphism p-6 rounded-xl">
+        <h4 class="text-gray-400 text-xs font-bold uppercase tracking-widest mb-4">Description</h4>
+        <p class="text-gray-200 leading-relaxed">{{ task.description|default:"No description provided." }}</p>
+      </div>
 
-  <a href="{% url 'task_manager:task-update' pk=task.pk %}" class="btn btn-warning">Update</a>
-  <a href="{% url 'task_manager:task-delete' pk=task.pk %}" class="btn btn-danger">Delete</a>
-  <a href="{% url 'task_manager:task-list' %}" class="btn btn-secondary">Back</a>
-  <a style="float: right" href="{% url 'task_manager:task-complete' pk=task.pk %}" class="btn btn-primary">{{ task.is_completed|yesno:"Incomplete,Complete" }}</a>
-  {% if task.deadline %}
-    <a href="{% url 'task_manager:task-google-calendar' task_id=task.pk %}" class="btn btn-success" style="margin-left:10px;">Add to Google Calendar</a>
-  {% endif %}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="glassmorphism p-6 rounded-xl flex items-center gap-4">
+          <span class="material-symbols-outlined text-indigo-400">calendar_today</span>
+          <div>
+            <p class="text-gray-500 text-[10px] font-bold uppercase">Start Date</p>
+            <p class="text-white font-medium">{{ task.created_at|date:'m/d/Y' }}</p>
+          </div>
+        </div>
+        <div class="glassmorphism p-6 rounded-xl flex items-center gap-4 border-l-4 {% if task.deadline < today %} border-red-500/50 {% else %} border-indigo-500/50 {% endif %}">
+          <span class="material-symbols-outlined text-red-400">event_busy</span>
+          <div>
+            <p class="text-gray-500 text-[10px] font-bold uppercase">Deadline</p>
+            <p class="text-white font-medium">{{ task.deadline|date:'m/d/Y' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Assignees & Attachments -->
+    <div class="flex flex-col gap-6">
+      <!-- Assignees -->
+      <div class="glassmorphism p-6 rounded-xl">
+        <h4 class="text-gray-400 text-xs font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-sm">group</span> Assignees
+        </h4>
+        <div class="flex flex-col gap-3">
+          {% for assignee in task.assignees.all %}
+            <div class="flex items-center gap-3 p-2 hover:bg-white/5 rounded-lg transition-colors group">
+              <div class="h-8 w-8 rounded-full bg-indigo-500 flex items-center justify-center text-[10px] font-bold text-white uppercase">
+                {{ assignee.username|slice:":2" }}
+              </div>
+              <div>
+                <p class="text-sm font-bold text-white group-hover:text-indigo-300 transition-colors">{{ assignee.username }}</p>
+                <p class="text-[10px] text-gray-500">ID: #{{ assignee.id }}</p>
+              </div>
+            </div>
+          {% empty %}
+            <p class="text-gray-500 text-sm italic">No assignees assigned.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Attachments -->
+      <div class="glassmorphism p-6 rounded-xl">
+        <h4 class="text-gray-400 text-xs font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
+          <span class="material-symbols-outlined text-sm">attach_file</span> Attachments
+        </h4>
+        {% if attachments %}
+          <ul class="flex flex-col gap-2">
+            {% for attachment in attachments %}
+              <li>
+                <a href="{{ attachment.file.url }}" target="_blank" class="flex items-center gap-2 p-2 rounded-lg bg-white/5 hover:bg-indigo-500/20 text-xs text-gray-300 hover:text-white transition-all">
+                  <span class="material-symbols-outlined text-sm">description</span>
+                  <span class="truncate">{{ attachment.file.name|cut:'attachments/' }}</span>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-gray-500 text-sm italic">No attachments found.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Actions -->
+  <div class="mt-6 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
+    <a href="{% url 'task_manager:task-list' %}" class="flex items-center gap-2 text-gray-400 hover:text-white transition-colors font-bold text-sm">
+      <span class="material-symbols-outlined">arrow_back</span> Back to List
+    </a>
+    <div class="flex items-center gap-2">
+      <a href="{% url 'task_manager:task-update' pk=task.pk %}" class="px-4 py-2 rounded-lg border border-amber-500/50 text-amber-500 hover:bg-amber-500 hover:text-white text-sm font-bold transition-all">
+        Edit Task
+      </a>
+      <a href="{% url 'task_manager:task-delete' pk=task.pk %}" class="px-4 py-2 rounded-lg border border-red-500/50 text-red-500 hover:bg-red-500 hover:text-white text-sm font-bold transition-all">
+        Delete Task
+      </a>
+    </div>
+  </div>
+</div>
 {% endblock %}

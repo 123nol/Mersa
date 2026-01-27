@@ -1,209 +1,176 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
 {% block extrastyle %}
-
-  <!-- Plugin css for this page -->
+  <!-- Keeping necessary plugin CSS -->
   <link rel="stylesheet" href="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.css' %}">
-  <link rel="stylesheet" href="{% static 'js/select.dataTables.min.css' %}">
-
 {% endblock extrastyle %}
 
-{% block pro_banner %}
-
-  {% include 'includes/pro-banner.html' %}
-
-{% endblock pro_banner %}
-
 {% block content %}
-  <!-- partial -->
-      <div class="row">
-        <div class="col-sm-12">
-          <div class="home-tab">
-            <div class="tab-content tab-content-basic">
-              <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview">
-                <div class="row">
-                  <div class="col-sm-12">
-                    <div class="statistics-details d-flex align-items-center justify-content-between">
-                      <div>
-                        <p class="statistics-title">Total Tasks</p>
-                        <h3 class="rate-percentage">{{ total_tasks }}</h3>
-                        <p class="text-muted d-flex"><span>All tasks in your workspaces</span></p>
-                      </div>
-                      <div>
-                        <p class="statistics-title">Closed Tasks</p>
-                        <h3 class="rate-percentage">{{ closed_task_counter }}</h3>
-                        <p class="text-success d-flex"><span>Completed</span></p>
-                      </div>
-                      <div>
-                        <p class="statistics-title">Open Tasks</p>
-                        <h3 class="rate-percentage">{{ open_tasks }}</h3>
-                        <p class="text-warning d-flex"><span>Pending</span></p>
-                      </div>
-                      <div class="d-none d-md-block">
-                        <p class="statistics-title">Overdue Tasks</p>
-                        <h3 class="rate-percentage">{{ overdue_count }}</h3>
-                        <p class="text-danger d-flex"><span>Require attention</span></p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-lg-8 d-flex flex-column">
-                    <div class="row flex-grow">
-                      <div class="col-12 col-lg-4 col-lg-12 grid-margin stretch-card">
-                        <div class="card card-rounded">
-                          <div class="card-body">
-                            <div class="d-sm-flex justify-content-between align-items-start">
-                              <div>
-                               <h4 class="card-title card-title-dash">Performance Line Chart</h4>
-                               <h5 class="card-subtitle card-subtitle-dash">Lorem Ipsum is simply dummy text of the printing</h5>
-                              </div>
-                              <div id="performance-line-legend"></div>
-                            </div>
-                            <div class="chartjs-wrapper mt-5" style="height:360px;">
-                              <canvas id="performaneLine"></canvas>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-lg-4 d-flex flex-column">
-                    <div class="row flex-grow">
-                      <div class="col-md-6 col-lg-12 grid-margin stretch-card">
-                        <div class="card bg-primary card-rounded">
-                          <div class="card-body pb-0">
-                            <h4 class="card-title card-title-dash text-white mb-4">Status Summary</h4>
-                            <div class="row">
-                              <div class="col-12">
-                                <div class="status-summary-chart-wrapper pb-4" style="height:220px;">
-                                  <canvas id="status-summary"></canvas>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-6 col-lg-12 grid-margin stretch-card">
-                        <div class="card card-rounded">
-                          <div class="card-body">
-                            <div class="row">
-                              <div class="col-sm-6">
-                                <div class="d-flex justify-content-between align-items-center mb-2 mb-sm-0">
-                                  <div class="circle-progress-width">
-                                    <div id="totalVisitors" class="progressbar-js-circle pr-2"></div>
-                                  </div>
-                                  <div>
-                                    <p class="text-small mb-2">Total Visitors</p>
-                                    <h4 id="totalVisitorsPercent" class="mb-0 fw-bold">{{ visitors_percentage|default:0 }}%</h4>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="col-sm-6">
-                                <div class="d-flex justify-content-between align-items-center">
-                                  <div class="circle-progress-width">
-                                    <div id="visitperday" class="progressbar-js-circle pr-2"></div>
-                                  </div>
-                                  <div>
-                                    <p class="text-small mb-2">Your visits</p>
-                                    <h4 id="myVisits" class="mb-0 fw-bold">{{ num_visits }}</h4>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-lg-8 d-flex flex-column">
+<div class="flex flex-col gap-6">
 
-                    <div class="row flex-grow">
-                      <div class="col-12 grid-margin stretch-card">
-                        <!-- Removed upgrade CTA. Replace with quick actions -->
-                        <div class="card card-rounded">
-                          <div class="card-body">
-                            <div class="col-sm-8">
-                              <h3 class="mb-0">Quick Actions</h3>
-                              <p class="text-muted">Create workspace or tasks to get started.</p>
-                              <a href="{% url 'task_manager:workspace-create' %}" class="btn btn-outline-primary me-2">Create Workspace</a>
-                              <a href="{% url 'task_manager:task-create' %}" class="btn btn-primary">Create Task</a>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-lg-4 d-flex flex-column">
-                    <div class="row flex-grow">
-                      <div class="col-12 grid-margin stretch-card">
-                        <div class="card card-rounded">
-                          <div class="card-body">
-                            <div class="row">
-                              <div class="col-lg-12">
-                                <div class="d-flex justify-content-between align-items-center">
-                                  <h4 class="card-title card-title-dash">Todo list</h4>
-                                  <div class="add-items d-flex mb-0">
-                                    <!-- <input type="text" class="form-control todo-list-input" placeholder="What do you need to do today?"> -->
-                                    <a href="{% url 'task_manager:task-create' %}" class="add btn btn-icons btn-rounded btn-primary text-white me-0 pl-12p"><i class="mdi mdi-plus"></i></a>
-                                  </div>
-                                </div>
-                                <div class="list-wrapper">
-                                  <ul class="todo-list todo-list-rounded">
-                                    {% for task in todo_items %}
-                                    <li class="d-block">
-                                      <div class="form-check w-100">
-                                        <label class="form-check-label">
-                                          <input class="checkbox" type="checkbox"> <a href="{% url 'task_manager:task-detail' pk=task.pk %}">{{ task.name }}</a> <i class="input-helper rounded"></i>
-                                        </label>
-                                        <div class="d-flex mt-2">
-                                          <div class="ps-4 text-small me-3">{{ task.deadline|date:'M d, Y' }}</div>
-                                          {% if task.deadline < today %}
-                                            <div class="badge badge-opacity-danger me-3">Expired</div>
-                                          {% else %}
-                                            <div class="badge badge-opacity-warning me-3">Due</div>
-                                          {% endif %}
-                                        </div>
-                                      </div>
-                                    </li>
-                                    {% empty %}
-                                    <li>No todos assigned to you.</li>
-                                    {% endfor %}
-                                  </ul>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+  <!-- Header Section -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <h2 class="text-2xl font-bold text-white">Dashboard Overview</h2>
+      <p class="text-gray-400 text-sm">Welcome back to MMI Task Management.</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="{% url 'task_manager:workspace-create' %}" class="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-bold transition-all">
+        <span class="material-symbols-outlined text-sm">add_circle</span>
+        New Workspace
+      </a>
+      <a href="{% url 'task_manager:task-create' %}" class="flex items-center gap-2 px-4 py-2 glassmorphism hover:bg-white/10 text-white rounded-lg text-sm font-bold transition-all">
+        <span class="material-symbols-outlined text-sm">rocket_launch</span>
+        Create Task
+      </a>
+    </div>
+  </div>
+
+  <!-- Statistics Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="glassmorphism p-5 rounded-xl flex flex-col gap-1">
+      <p class="text-gray-400 text-xs font-bold uppercase tracking-wider">Total Tasks</p>
+      <h3 class="text-3xl font-black text-white">{{ total_tasks }}</h3>
+      <p class="text-[10px] text-indigo-300">Across all workspaces</p>
+    </div>
+    <div class="glassmorphism p-5 rounded-xl flex flex-col gap-1">
+      <p class="text-gray-400 text-xs font-bold uppercase tracking-wider">Closed Tasks</p>
+      <h3 class="text-3xl font-black text-green-400">{{ closed_task_counter }}</h3>
+      <p class="text-[10px] text-green-500/80 flex items-center gap-1">
+        <span class="material-symbols-outlined text-[10px]">check_circle</span> Completed
+      </p>
+    </div>
+    <div class="glassmorphism p-5 rounded-xl flex flex-col gap-1">
+      <p class="text-gray-400 text-xs font-bold uppercase tracking-wider">Open Tasks</p>
+      <h3 class="text-3xl font-black text-amber-400">{{ open_tasks }}</h3>
+      <p class="text-[10px] text-amber-500/80 flex items-center gap-1">
+        <span class="material-symbols-outlined text-[10px]">pending</span> Pending Action
+      </p>
+    </div>
+    <div class="glassmorphism p-5 rounded-xl flex flex-col gap-1 border-l-4 border-red-500/50">
+      <p class="text-gray-400 text-xs font-bold uppercase tracking-wider">Overdue</p>
+      <h3 class="text-3xl font-black text-red-500">{{ overdue_count }}</h3>
+      <p class="text-[10px] text-red-400 flex items-center gap-1">
+        <span class="material-symbols-outlined text-[10px]">priority_high</span> Require Attention
+      </p>
+    </div>
+  </div>
+
+  <!-- Main Charts Section -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    
+    <!-- Performance Line Chart -->
+    <div class="lg:col-span-8 glassmorphism p-6 rounded-xl flex flex-col gap-4">
+      <div class="flex justify-between items-start">
+        <div>
+          <h4 class="text-lg font-bold text-white">Performance Analytics</h4>
+          <p class="text-xs text-gray-400">Task completion trends over time</p>
+        </div>
+        <div id="performance-line-legend"></div>
+      </div>
+      <!-- Fixed Height Container for Chart.js -->
+      <div class="relative h-[360px] w-full mt-4">
+        <canvas id="performaneLine"></canvas>
+      </div>
+    </div>
+
+    <!-- Status Summary -->
+    <div class="lg:col-span-4 flex flex-col gap-6">
+      <div class="glassmorphism bg-indigo-600/20 p-6 rounded-xl flex flex-col h-full">
+        <h4 class="text-lg font-bold text-white mb-4">Status Summary</h4>
+        <div class="relative h-[220px] w-full flex items-center justify-center">
+          <canvas id="status-summary"></canvas>
+        </div>
+      </div>
+
+      <!-- Visit Metrics -->
+      <div class="glassmorphism p-6 rounded-xl flex flex-col gap-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="flex flex-col items-center text-center gap-2">
+            <div id="totalVisitors" class="h-12 w-12 relative"></div>
+            <p class="text-[10px] text-gray-400 uppercase font-bold">Total Visitors</p>
+            <h4 class="text-lg font-bold text-white">{{ visitors_percentage|default:0 }}%</h4>
+          </div>
+          <div class="flex flex-col items-center text-center gap-2">
+            <div id="visitperday" class="h-12 w-12 relative"></div>
+            <p class="text-[10px] text-gray-400 uppercase font-bold">Your Visits</p>
+            <h4 class="text-lg font-bold text-white">{{ num_visits }}</h4>
           </div>
         </div>
       </div>
     </div>
-    <!-- content-wrapper ends -->
   </div>
-  <!-- main-panel ends -->
-  {% endblock %}
 
-  {% block extra_js %}
+  <!-- Bottom Section: Quick Actions & Todo -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+    
+    <!-- Quick Actions -->
+    <div class="lg:col-span-7 glassmorphism p-8 rounded-xl flex items-center justify-between bg-gradient-to-r from-indigo-900/40 to-transparent">
+      <div class="max-w-md">
+        <h3 class="text-xl font-bold text-white mb-2">Quick Actions</h3>
+        <p class="text-gray-400 text-sm mb-6">Streamline your workflow by creating new containers for your team's projects.</p>
+        <div class="flex gap-3">
+          <a href="{% url 'task_manager:workspace-create' %}" class="px-6 py-2 bg-white text-indigo-900 rounded-lg text-sm font-bold hover:bg-indigo-100 transition-colors">Create Workspace</a>
+          <a href="{% url 'task_manager:task-create' %}" class="px-6 py-2 border border-white/20 text-white rounded-lg text-sm font-bold hover:bg-white/10 transition-colors">New Task</a>
+        </div>
+      </div>
+      <span class="material-symbols-outlined text-8xl text-white/5 hidden md:block">bolt</span>
+    </div>
 
-  <!-- Plugin js for this page -->
+    <!-- Todo List -->
+    <div class="lg:col-span-5 glassmorphism p-6 rounded-xl flex flex-col gap-4">
+      <div class="flex justify-between items-center border-b border-white/10 pb-4">
+        <h4 class="text-lg font-bold text-white flex items-center gap-2">
+          <span class="material-symbols-outlined text-indigo-400">format_list_bulleted</span>
+          Todo List
+        </h4>
+        <a href="{% url 'task_manager:task-create' %}" class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white hover:bg-indigo-500 transition-colors">
+          <span class="material-symbols-outlined text-sm">add</span>
+        </a>
+      </div>
+      
+      <div class="overflow-y-auto max-h-[300px] custom-scrollbar pr-2">
+        <ul class="flex flex-col gap-3">
+          {% for task in todo_items %}
+          <li class="group glassmorphism bg-white/5 hover:bg-white/10 p-3 rounded-lg transition-all border-none">
+            <div class="flex items-start gap-3">
+              <input type="checkbox" class="mt-1 rounded border-white/20 bg-transparent text-indigo-600 focus:ring-indigo-500">
+              <div class="flex-1">
+                <a href="{% url 'task_manager:task-detail' pk=task.pk %}" class="text-sm font-medium text-gray-200 group-hover:text-white transition-colors">
+                  {{ task.name }}
+                </a>
+                <div class="flex items-center gap-3 mt-1">
+                  <span class="text-[10px] text-gray-500 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[10px]">calendar_today</span>
+                    {{ task.deadline|date:'M d, Y' }}
+                  </span>
+                  {% if task.deadline < today %}
+                    <span class="px-2 py-0.5 rounded text-[10px] bg-red-500/20 text-red-400 border border-red-500/30">Expired</span>
+                  {% else %}
+                    <span class="px-2 py-0.5 rounded text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30">Due</span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </li>
+          {% empty %}
+          <li class="text-center py-8 text-gray-500 italic text-sm">No todos assigned to you.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+  <!-- Charting Plugins -->
   <script src="{% static 'vendors/chart.js/Chart.min.js' %}"></script>
   <script src="{% static 'vendors/progressbar.js/progressbar.min.js' %}"></script>
-
-  <!-- Custom js for this page-->
-  <script src="{% static 'js/jquery.cookie.js' %}" type="text/javascript"></script>
   <script src="{% static 'js/dashboard.js' %}"></script>
-  <script src="{% static 'js/Chart.roundedBarCharts.js' %}"></script>
+  
   <script>
     // Inject dashboard data for charts
     window.DASHBOARD_DATA = window.DASHBOARD_DATA || {};
@@ -216,6 +183,4 @@
     window.DASHBOARD_DATA.visitors_total = {{ visitors_total|default:0 }};
     window.DASHBOARD_DATA.my_visits = {{ my_visits|default:0 }};
   </script>
-  <!-- End custom js for this page-->
-
-  {% endblock extra_js %}
+{% endblock extra_js %}

@@ -1,13 +1,48 @@
 {% extends "base.html" %}
 {% load crispy_forms_filters %}
+
+{% block extrastyle %}
+<style>
+  /* Local Crispy Overrides */
+  input, select, textarea {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    border-radius: 0.5rem !important;
+    padding: 0.75rem !important;
+  }
+  input:focus { border-color: #6366f1 !important; outline: none !important; }
+  label { color: #9ca3af !important; font-size: 0.75rem !important; font-weight: 700 !important; text-transform: uppercase !important; }
+</style>
+{% endblock extrastyle %}
+
 {% block content %}
-  <h4 class="card-title">{{ object|yesno:"Update,Create" }} position</h4>
-  <div class="form-group">
-    <form action="" method="post" novalidate>
+<div class="max-w-xl mx-auto flex flex-col gap-6">
+  
+  <div class="flex items-center gap-4 border-b border-white/10 pb-6">
+    <div class="h-12 w-12 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+      <span class="material-symbols-outlined text-3xl">badge</span>
+    </div>
+    <div>
+      <h2 class="text-2xl font-bold text-white">{{ object|yesno:"Update,Create" }} Position</h2>
+      <p class="text-sm text-gray-400">Define administrative or technical roles for MMI staff.</p>
+    </div>
+  </div>
+
+  <div class="glassmorphism p-8 rounded-2xl">
+    <form action="" method="post" novalidate class="flex flex-col gap-5">
       {% csrf_token %}
       {{ form|crispy }}
-      <input type="submit" class="btn btn-primary me-2">
-      <a href="{% url 'task_manager:position-list' %}" class="btn btn-secondary">Back</a>
+      
+      <div class="flex items-center gap-3 mt-4 pt-6 border-t border-white/10">
+        <button type="submit" class="flex-1 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-indigo-500/20">
+          Save Position
+        </button>
+        <a href="{% url 'task_manager:position-list' %}" class="flex-1 py-3 glassmorphism hover:bg-white/10 text-gray-300 rounded-xl font-bold transition-all text-center text-sm">
+          Cancel
+        </a>
+      </div>
     </form>
   </div>
+</div>
 {% endblock %}

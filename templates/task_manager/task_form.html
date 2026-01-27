@@ -1,25 +1,105 @@
 {% extends "base.html" %}
 {% load crispy_forms_filters %}
+
+{% block extrastyle %}
+<style>
+  /* Styling Crispy Forms to match Glassmorphism */
+  .asteriskField { color: #818cf8; }
+  input, select, textarea {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    border-radius: 0.5rem !important;
+    padding: 0.5rem 0.75rem !important;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none !important;
+    border-color: #6366f1 !important;
+    ring: 2px #6366f1 !important;
+  }
+  label {
+    color: #9ca3af !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    margin-bottom: 0.5rem !important;
+  }
+  .help-block, .invalid-feedback {
+    font-size: 0.7rem !important;
+    color: #f87171 !important;
+  }
+</style>
+{% endblock extrastyle %}
+
 {% block content %}
-  <h4 class="card-title">{{ object|yesno:"Update,Create" }} task</h4>
-  <div class="form-group">
-    <form action="" method="post" enctype="multipart/form-data" novalidate>
+<div class="max-w-3xl mx-auto flex flex-col gap-6">
+  
+  <!-- Header -->
+  <div class="flex items-center gap-4 border-b border-white/10 pb-6">
+    <div class="h-12 w-12 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+      <span class="material-symbols-outlined text-3xl">
+        {% if object %}edit_note{% else %}add_task{% endif %}
+      </span>
+    </div>
+    <div>
+      <h2 class="text-2xl font-bold text-white">{{ object|yesno:"Update,Create" }} Task</h2>
+      <p class="text-sm text-gray-400">Fill in the details for the MMI task queue.</p>
+    </div>
+  </div>
+
+  <!-- Form Card -->
+  <div class="glassmorphism p-8 rounded-2xl">
+    <form action="" method="post" enctype="multipart/form-data" novalidate class="flex flex-col gap-5">
       {% csrf_token %}
-      {{ form|crispy }}
-      <label for="id_attachments">Attachments (PDF only):</label>
-      <input type="file" name="attachments" id="id_attachments" accept="application/pdf" multiple>
-      {% if attachments %}
-        <div class="mt-2">
-          <strong>Existing Attachments:</strong>
-          <ul>
-            {% for attachment in attachments %}
-              <li><a href="{{ attachment.file.url }}" target="_blank">{{ attachment.file.name|cut:'attachments/' }}</a></li>
-            {% endfor %}
-          </ul>
+      
+      <!-- Crispy Form Section -->
+      <div class="space-y-4">
+        {{ form|crispy }}
+      </div>
+
+      <!-- Custom Attachment Section -->
+      <div class="flex flex-col gap-2 mt-2">
+        <label for="id_attachments" class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-sm">attach_file</span>
+          Attachments (PDF only)
+        </label>
+        <div class="relative group">
+          <input type="file" name="attachments" id="id_attachments" accept="application/pdf" multiple
+                 class="block w-full text-sm text-gray-400
+                        file:mr-4 file:py-2 file:px-4
+                        file:rounded-full file:border-0
+                        file:text-xs file:font-bold
+                        file:bg-indigo-600 file:text-white
+                        hover:file:bg-indigo-500
+                        cursor-pointer transition-all">
         </div>
-      {% endif %}
-      <input type="submit" class="btn btn-primary me-2">
-      <a href="{% url 'task_manager:task-list' %}" class="btn btn-secondary">Back</a>
+        
+        {% if attachments %}
+          <div class="mt-4 p-4 bg-white/5 rounded-lg border border-white/10">
+            <p class="text-xs font-bold text-gray-300 mb-2 uppercase tracking-widest">Existing Attachments:</p>
+            <ul class="space-y-1">
+              {% for attachment in attachments %}
+                <li class="flex items-center gap-2 text-xs text-indigo-300">
+                  <span class="material-symbols-outlined text-[14px]">description</span>
+                  <a href="{{ attachment.file.url }}" target="_blank" class="hover:underline">{{ attachment.file.name|cut:'attachments/' }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-3 mt-6 pt-6 border-t border-white/10">
+        <button type="submit" class="px-8 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-indigo-500/20">
+          Save Task
+        </button>
+        <a href="{% url 'task_manager:task-list' %}" class="px-6 py-2.5 glassmorphism hover:bg-white/10 text-gray-300 rounded-lg text-sm font-bold transition-all">
+          Cancel
+        </a>
+      </div>
     </form>
   </div>
+</div>
 {% endblock %}

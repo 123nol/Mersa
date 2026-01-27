@@ -1,10 +1,46 @@
 {% extends "base.html" %}
+
 {% block content %}
-<h2>Create Workspace</h2>
-<form method="post">{% csrf_token %}
-  <label for="name">Workspace Name:</label>
-  <input type="text" name="name" id="name" required><br>
-  <button type="submit" class="btn btn-success">Create</button>
-</form>
-<a href="{% url 'task_manager:workspace-list' %}">Back to Workspaces</a>
+<div class="max-w-2xl mx-auto flex flex-col gap-8">
+  
+  <!-- Header -->
+  <div class="text-center flex flex-col items-center gap-4">
+    <div class="h-16 w-16 rounded-2xl bg-purple-500/20 flex items-center justify-center text-purple-400">
+      <span class="material-symbols-outlined text-4xl">create_new_folder</span>
+    </div>
+    <div>
+      <h2 class="text-3xl font-black text-white">Create Workspace</h2>
+      <p class="text-gray-400 mt-2">New environments for team collaboration at MMI.</p>
+    </div>
+  </div>
+
+  <!-- Form Card -->
+  <div class="glassmorphism p-10 rounded-3xl relative overflow-hidden">
+    <!-- Background Glow -->
+    <div class="absolute -top-24 -left-24 h-48 w-48 bg-indigo-500/10 rounded-full blur-3xl"></div>
+
+    <form method="post" class="relative z-10 flex flex-col gap-6">
+      {% csrf_token %}
+      
+      <div class="flex flex-col gap-2">
+        <label for="name" class="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">
+          Workspace Name
+        </label>
+        <input type="text" name="name" id="name" required 
+               placeholder="e.g. Frontend Development"
+               class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all">
+      </div>
+
+      <div class="flex flex-col gap-3 mt-4">
+        <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all shadow-xl shadow-indigo-500/20 flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined">rocket_launch</span>
+          Initialize Workspace
+        </button>
+        <a href="{% url 'task_manager:workspace-list' %}" class="w-full py-3 text-center text-gray-500 hover:text-white transition-colors text-sm font-bold">
+          Back to Workspaces
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
 {% endblock %}

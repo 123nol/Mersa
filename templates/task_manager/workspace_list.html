@@ -1,15 +1,61 @@
 {% extends "base.html" %}
+
 {% block content %}
-<h2>Workspaces</h2>
-<ul>
-  {% for membership in memberships %}
-    <li>
-      <a href="{% url 'task_manager:workspace-detail' membership.workspace.id %}">{{ membership.workspace.name }}</a>
-      (role: {{ membership.role }})
-    </li>
-  {% empty %}
-    <li>No workspaces.</li>
-  {% endfor %}
-</ul>
-<a href="{% url 'task_manager:workspace-create' %}" class="btn btn-primary">Create Workspace</a>
+<div class="flex flex-col gap-6">
+
+  <!-- Header Section -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
+    <div class="flex items-center gap-3">
+      <div class="h-10 w-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
+        <span class="material-symbols-outlined text-purple-400">workspaces</span>
+      </div>
+      <div>
+        <h2 class="text-2xl font-bold text-white">Workspaces</h2>
+        <p class="text-gray-400 text-sm">Your collaborative environments at MMI</p>
+      </div>
+    </div>
+    <a href="{% url 'task_manager:workspace-create' %}" class="flex items-center gap-2 px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-bold transition-all">
+      <span class="material-symbols-outlined text-sm">add_box</span>
+      Create Workspace
+    </a>
+  </div>
+
+  <!-- Workspaces Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for membership in memberships %}
+      <div class="group glassmorphism p-6 rounded-xl hover:bg-white/10 transition-all duration-300 relative overflow-hidden">
+        <!-- Decorative Glow -->
+        <div class="absolute -top-10 -right-10 h-24 w-24 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-all"></div>
+        
+        <div class="flex flex-col gap-4 relative z-10">
+          <div class="flex items-start justify-between">
+            <span class="material-symbols-outlined text-3xl text-indigo-400">folder_open</span>
+            <span class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest bg-white/10 text-gray-300">
+              {{ membership.role }}
+            </span>
+          </div>
+          
+          <div>
+            <a href="{% url 'task_manager:workspace-detail' membership.workspace.id %}" class="text-lg font-bold text-white group-hover:text-indigo-300 transition-colors">
+              {{ membership.workspace.name }}
+            </a>
+            <p class="text-xs text-gray-500 mt-1">Click to view projects and members</p>
+          </div>
+
+          <div class="flex items-center justify-end mt-2">
+            <span class="text-xs font-bold text-indigo-400 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              Open Workspace <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-span-full glassmorphism p-12 rounded-xl text-center">
+        <span class="material-symbols-outlined text-5xl text-gray-600 mb-4">folder_off</span>
+        <p class="text-gray-400 italic text-lg">You are not a member of any workspaces yet.</p>
+        <a href="{% url 'task_manager:workspace-create' %}" class="inline-block mt-4 text-indigo-400 font-bold hover:text-indigo-300 underline underline-offset-4">Create your first one</a>
+      </div>
+    {% endfor %}
+  </div>
+</div>
 {% endblock %}

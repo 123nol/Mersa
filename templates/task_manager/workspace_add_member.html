@@ -1,21 +1,54 @@
 {% extends "base.html" %}
+
 {% block content %}
-<h2>Add Member to {{ workspace.name }}</h2>
-<form method="post">{% csrf_token %}
-  <label for="username">User:</label>
-  <select name="username" id="username">
-    {% for user in users %}
-      <option value="{{ user.username }}">{{ user.username }}</option>
-    {% endfor %}
-  </select><br>
-  <label for="role">Role:</label>
-  <select name="role" id="role">
-    <option value="ADMIN">Admin</option>
-    <option value="MANAGER">Manager</option>
-    <option value="MEMBER">Member</option>
-    <option value="VIEWER">Viewer</option>
-  </select><br>
-  <button type="submit" class="btn btn-success">Add</button>
-</form>
-<a href="{% url 'task_manager:workspace-detail' workspace.id %}">Back to Workspace</a>
+<div class="max-w-xl mx-auto flex flex-col gap-6">
+  
+  <!-- Header -->
+  <div class="flex items-center gap-4 border-b border-white/10 pb-6">
+    <div class="h-12 w-12 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+      <span class="material-symbols-outlined text-3xl">person_add</span>
+    </div>
+    <div>
+      <h2 class="text-2xl font-bold text-white">Add Member</h2>
+      <p class="text-sm text-gray-400">Invite personnel to <span class="text-indigo-400 font-bold">{{ workspace.name }}</span></p>
+    </div>
+  </div>
+
+  <!-- Form Card -->
+  <div class="glassmorphism p-8 rounded-2xl">
+    <form method="post" class="flex flex-col gap-6">
+      {% csrf_token %}
+      
+      <!-- User Selection -->
+      <div class="flex flex-col gap-2">
+        <label for="username" class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Select User</label>
+        <select name="username" id="username" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-all appearance-none cursor-pointer">
+          {% for user in users %}
+            <option value="{{ user.username }}" class="bg-[#1a237e] text-white">{{ user.username }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Role Selection -->
+      <div class="flex flex-col gap-2">
+        <label for="role" class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Assign Role</label>
+        <select name="role" id="role" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition-all appearance-none cursor-pointer">
+          <option value="ADMIN" class="bg-[#1a237e] text-white">Admin</option>
+          <option value="MANAGER" class="bg-[#1a237e] text-white">Manager</option>
+          <option value="MEMBER" class="bg-[#1a237e] text-white">Member</option>
+          <option value="VIEWER" class="bg-[#1a237e] text-white">Viewer</option>
+        </select>
+      </div>
+
+      <div class="flex items-center gap-3 mt-4 pt-6 border-t border-white/10">
+        <button type="submit" class="flex-1 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-indigo-500/20">
+          Add to Workspace
+        </button>
+        <a href="{% url 'task_manager:workspace-detail' workspace.id %}" class="flex-1 py-3 glassmorphism hover:bg-white/10 text-gray-300 rounded-xl font-bold transition-all text-center text-sm">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
 {% endblock %}

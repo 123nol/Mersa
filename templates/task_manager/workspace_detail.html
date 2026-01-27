@@ -1,32 +1,103 @@
 {% extends "base.html" %}
+
 {% block content %}
-<h2>Workspace: {{ workspace.name }}</h2>
-<p>Created by: {{ workspace.created_by }}</p>
-<h3>Members</h3>
-<ul>
-  {% for member in members %}
-    <li>{{ member.user.username }} ({{ member.role }})
-      {% if request.user == workspace.created_by or member.role != 'ADMIN' %}
-        <a href="{% url 'task_manager:workspace-change-role' workspace.id member.user.id %}">Change Role</a>
-        <a href="{% url 'task_manager:workspace-remove-member' workspace.id member.user.id %}">Remove</a>
+<div class="flex flex-col gap-6">
+
+  <!-- Workspace Header -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
+    <div class="flex items-center gap-4">
+      <div class="h-12 w-12 rounded-xl bg-purple-500/20 flex items-center justify-center">
+        <span class="material-symbols-outlined text-purple-400 text-3xl">hub</span>
+      </div>
+      <div>
+        <h2 class="text-3xl font-black text-white">{{ workspace.name }}</h2>
+        <p class="text-sm text-gray-400">Created by <span class="text-purple-400">{{ workspace.created_by }}</span></p>
+      </div>
+    </div>
+    
+    <div class="flex items-center gap-2">
+      <a href="{% url 'task_manager:workspace-add-member' workspace.id %}" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-bold transition-all flex items-center gap-2">
+        <span class="material-symbols-outlined text-sm">person_add</span>
+        Add Member
+      </a>
+      {% if request.user == workspace.created_by %}
+        <form method="post" action="{% url 'task_manager:workspace-delete' workspace.id %}" class="inline">
+          {% csrf_token %}
+          <button type="submit" class="px-4 py-2 glassmorphism border-red-500/50 text-red-400 hover:bg-red-500 hover:text-white rounded-lg text-sm font-bold transition-all">
+            Delete Workspace
+          </button>
+        </form>
       {% endif %}
-    </li>
-  {% endfor %}
-</ul>
-<a href="{% url 'task_manager:workspace-add-member' workspace.id %}" class="btn btn-secondary">Add Member</a>
-  {% if request.user == workspace.created_by %}
-    <form method="post" action="{% url 'task_manager:workspace-delete' workspace.id %}" style="display:inline;">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-danger">Delete Workspace</button>
-    </form>
-  {% endif %}
-<h3>Tasks</h3>
-<ul>
-  {% for task in tasks %}
-    <li>{{ task.name }} ({{ task.assignees.all|join:", " }})</li>
-  {% empty %}
-    <li>No tasks in this workspace.</li>
-  {% endfor %}
-</ul>
-<a href="{% url 'task_manager:workspace-list' %}">Back to Workspaces</a>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    
+    <!-- Members Card -->
+    <div class="glassmorphism p-6 rounded-xl flex flex-col gap-4">
+      <h3 class="text-lg font-bold text-white flex items-center gap-2">
+        <span class="material-symbols-outlined text-indigo-400">group</span>
+        Team Members
+      </h3>
+      <div class="flex flex-col gap-2">
+        {% for member in members %}
+          <div class="flex items-center justify-between p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-all group">
+            <div class="flex items-center gap-3">
+              <div class="h-10 w-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center font-bold text-gray-300">
+                {{ member.user.username|slice:":1"|upper }}
+              </div>
+              <div>
+                <p class="text-sm font-bold text-white">{{ member.user.username }}</p>
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">{{ member.role }}</p>
+              </div>
+            </div>
+            
+            {% if request.user == workspace.created_by or member.role != 'ADMIN' %}
+              <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <a href="{% url 'task_manager:workspace-change-role' workspace.id member.user.id %}" class="p-1 hover:text-indigo-400 transition-colors" title="Change Role">
+                  <span class="material-symbols-outlined text-lg">manage_accounts</span>
+                </a>
+                <a href="{% url 'task_manager:workspace-remove-member' workspace.id member.user.id %}" class="p-1 hover:text-red-400 transition-colors" title="Remove Member">
+                  <span class="material-symbols-outlined text-lg">person_remove</span>
+                </a>
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Tasks Card -->
+    <div class="glassmorphism p-6 rounded-xl flex flex-col gap-4">
+      <h3 class="text-lg font-bold text-white flex items-center gap-2">
+        <span class="material-symbols-outlined text-indigo-400">list_alt</span>
+        Workspace Tasks
+      </h3>
+      <div class="flex flex-col gap-2">
+        {% for task in tasks %}
+          <div class="flex items-center justify-between p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-all">
+            <div class="flex flex-col">
+              <p class="text-sm font-bold text-white">{{ task.name }}</p>
+              <p class="text-[10px] text-gray-500 italic">Assignees: {{ task.assignees.all|join:", " }}</p>
+            </div>
+            <span class="material-symbols-outlined text-gray-600 text-sm">arrow_forward_ios</span>
+          </div>
+        {% empty %}
+          <div class="py-8 text-center">
+            <span class="material-symbols-outlined text-gray-600 text-4xl mb-2">inventory_2</span>
+            <p class="text-gray-500 italic text-sm">No tasks assigned to this workspace.</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+
+  <div class="mt-4">
+    <a href="{% url 'task_manager:workspace-list' %}" class="inline-flex items-center gap-2 text-gray-500 hover:text-indigo-400 transition-colors text-sm font-bold">
+      <span class="material-symbols-outlined">west</span>
+      Back to Workspaces
+    </a>
+  </div>
+</div>
 {% endblock %}

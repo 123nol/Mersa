@@ -1,15 +1,37 @@
-<div class="home-tab">
-  <div class="d-sm-flex align-items-center justify-content-between border-bottom">
-    <ul class="nav nav-tabs" role="tablist">
-      <li class="nav-item">
-        <a class="nav-link" id="home-tab" href="{% url 'task_manager:task-not-completed' %}" role="tab" aria-controls="overview" aria-selected="true">Uncompleted</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" id="profile-tab" href="{% url 'task_manager:task-completed' %}" role="tab" aria-selected="false">Completed</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active  border-0" id="contact-tab" href="{% url 'task_manager:task-list' %}" role="tab" aria-selected="false">All</a>
-      </li>
-    </ul>
+<div class="mb-6">
+  <div class="flex items-center p-1 glassmorphism rounded-xl w-fit">
+    <nav class="flex gap-1" role="tablist">
+      
+      <!-- Uncompleted Tab -->
+      <a class="px-5 py-2 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-2 
+                {% if '/not-completed/' in request.path %} bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 {% else %} text-gray-400 hover:bg-white/5 hover:text-white {% endif %}" 
+         id="home-tab" 
+         href="{% url 'task_manager:task-not-completed' %}" 
+         role="tab">
+        <span class="material-symbols-outlined text-sm">pending_actions</span>
+        Uncompleted
+      </a>
+
+      <!-- Completed Tab -->
+      <a class="px-5 py-2 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-2 
+                {% if '/completed/' in request.path %} bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 {% else %} text-gray-400 hover:bg-white/5 hover:text-white {% endif %}" 
+         id="profile-tab" 
+         href="{% url 'task_manager:task-completed' %}" 
+         role="tab">
+        <span class="material-symbols-outlined text-sm">task_alt</span>
+        Completed
+      </a>
+
+      <!-- All Tab -->
+      <a class="px-5 py-2 rounded-lg text-sm font-bold transition-all duration-200 flex items-center gap-2 
+                {% if '/task-list/' in request.path or '/tasks/' in request.path %} bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 {% else %} text-gray-400 hover:bg-white/5 hover:text-white {% endif %}" 
+         id="contact-tab" 
+         href="{% url 'task_manager:task-list' %}" 
+         role="tab">
+        <span class="material-symbols-outlined text-sm">format_list_bulleted</span>
+        All
+      </a>
+
+    </nav>
   </div>
 </div>

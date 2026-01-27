@@ -1,157 +1,129 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block body_class %}
-  sidebar-icon-only
-{% endblock %}
+{% block body_class %} sidebar-icon-only {% endblock %}
 
 {% block content %}
-
-  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
-  <link rel="stylesheet" href="{% static 'css/messages.css' %}">
-
-
+<div class="flex flex-col h-[calc(100vh-140px)]"> <!-- Fixed height to prevent infinite loops -->
+  
   {% if user.is_authenticated %}
     <input type="hidden" id="logged-in-user" value="{{ user.id }}">
-    <form method="post" action="{% url 'chat:start_chat' %}" class="mb-3" style="max-width: 400px;">
-      {% csrf_token %}
-      <div class="input-group">
-        <select name="other_user_id" class="form-control" required>
-          <option value="">Start chat with...</option>
+    
+    <!-- User Selector -->
+    <div class="mb-4 glassmorphism p-2 rounded-xl w-fit">
+      <form method="post" action="{% url 'chat:start_chat' %}" class="flex items-center gap-2">
+        {% csrf_token %}
+        <select name="other_user_id" class="bg-transparent text-xs font-bold text-white border-none focus:ring-0 cursor-pointer px-4" required>
+          <option value="" class="bg-[#1a237e]">Start new chat...</option>
           {% for worker in all_workers %}
             {% if worker != user %}
-              <option value="{{ worker.id }}">{{ worker.username }}</option>
+              <option value="{{ worker.id }}" class="bg-[#1a237e]">{{ worker.username }}</option>
             {% endif %}
           {% endfor %}
         </select>
-        <button class="btn btn-primary" type="submit">Start</button>
-      </div>
-    </form>
+        <button class="h-8 w-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white hover:bg-indigo-500 transition-colors" type="submit">
+          <span class="material-symbols-outlined text-sm">add</span>
+        </button>
+      </form>
+    </div>
   {% endif %}
 
-  <div class="container">
-    <div class="row clearfix">
-      <div class="col-lg-12">
-        <div class="card chat-app">
-          <div id="plist" class="people-list">
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fa fa-search"></i></span>
-              </div>
-              <input type="text" class="form-control" placeholder="Search...">
-            </div>
-            <ul class="list-unstyled chat-list mt-2 mb-0">
-              {% for thread in Threads %}
-                <li class="clearfix contact-li" chat-id="chat_{{ thread.id }}">
-                  {#                                                <li  class="{% if forloop.first %}active{% endif %} contact-li" chat-id="chat_{{ thread.id }}" style="cursor: pointer">#}
-
-                  <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
-                  <div class="about" chat-id="chat_{{ thread.id }}">
-                    {% if thread.first_person == user %}
-                      <span>{{ thread.second_person.username }}</span>
-                    {% else %}
-                      <span>{{ thread.first_person.username }}</span>
-                    {% endif %}
-                    {#                            <div class="name">Vincent Porter</div>#}
-                    {#                            <div class="status"> <i class="fa fa-circle offline"></i> left 7 mins ago </div>                                            #}
-                  </div>
-                </li>
-              {% endfor %}
-            </ul>
-          </div>
-        
-          <div class="chat">
-              {% for thread in Threads %}
-                <div class="messages-wrapper  {% if forloop.first %}hide is_active{% else %}hide{% endif %}"
-                     chat-id="chat_{{ thread.id }}" other-user-id="
-                                        {% if thread.first_person == user %}
-                                            {{ thread.second_person.id }}
-                                        {% else %}
-                                            {{ thread.first_person.id }}
-                                        {% endif %}
-                                    ">
-            <div class="chat-header clearfix">
-                  <div class="row">
-                    <div class="col-lg-6">
-                      <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
-                      </a>
-                      <div class="user_info">
-                        {% if thread.first_person == user %}
-                          <span>Chat with {{ thread.second_person.username }}</span>
-                        {% else %}
-                          <span>Chat with {{ thread.first_person.username }}</span>
-                        {% endif %}
-                      </div>
-                      {#                  <div class="chat-about">#}
-                      {#                    <h6 class="m-b-0">Aiden Chavez</h6>#}
-                      {#                    <small>Last seen: 2 hours ago</small>#}
-                      {#                  </div>#}
-                    </div>
-                    <div class="col-lg-6 hidden-sm text-right">
-                      <!-- Paperclip Button: triggers file input for work files -->
-                      <label class="btn btn-outline-secondary" style="margin-bottom:0;">
-                        <i class="fa fa-paperclip"></i>
-                        <input type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip,.rar,.7z,.odt,.ods,.odp,.rtf,.html,.xml,.json,.md,.jpg,.jpeg,.png,.gif,.bmp,.svg,.webp" style="display:none;" id="file-input">
-                      </label>
-                      <!-- Gallery Button: triggers file input for gallery selection -->
-                      <label class="btn btn-outline-primary" style="margin-bottom:0;">
-                        <i class="fa fa-image"></i>
-                        <input type="file" accept="image/*" style="display:none;" id="gallery-input">
-                      </label>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="chat-history" id="chat-history">
-                <ul class="m-b-0">
-                {% for chat in thread.chatmessage_thread.all %}
-                  {% if chat.user == user %}
-                    <li class="clearfix">
-                      <div class="message-data text-right">
-                        <span
-                            class="message-data-time">{{ chat.timestamp|date:"d D" }}, {{ chat.timestamp|time:"H:i" }}</span>
-                      </div>
-                      <div class="message other-message float-right">
-                        {{ chat.message|safe }}
-                      </div>
-                    </li>
-                  {% else %}
-                    <li class="clearfix">
-                      <div class="message-data">
-                          <span
-                              class="message-data-time">{{ chat.timestamp|date:"d D" }}, {{ chat.timestamp|time:"H:i" }}</span>
-                      </div>
-                      <div class="message my-message">
-                        {{ chat.message|safe }}
-                      </div>
-                    </li>
-                  {% endif %}
-                {% endfor %}
-              </ul>
-              </div>
-            </div>
-          {% endfor %}
-          
-            <div class="chat-message clearfix">
-              <form id="send-message-form">
-                <div class="input-group mb-0">
-                  <div class="input-group-prepend">
-                    <button class="btn btn-secondary" type="submit">
-{#                                        <span class="input-group-text"><i class="fa fa-send"></i></span>#}
-                    </button>
-                  </div>
-                  <input type="text" id="input-message" class="form-control" placeholder="Enter text here...">
-                </div>
-              </form>
-            </div>
-          </div>
-        
+  <div class="flex-1 flex overflow-hidden glassmorphism rounded-3xl">
+    
+    <!-- Sidebar: People List -->
+    <aside class="w-80 border-r border-white/10 flex flex-col bg-white/5">
+      <div class="p-4 border-b border-white/10">
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3 top-2.5 text-gray-500 text-sm">search</span>
+          <input type="text" placeholder="Search conversations..." class="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
         </div>
       </div>
-    </div>
+      
+      <div class="flex-1 overflow-y-auto custom-scrollbar">
+        <ul class="flex flex-col p-2 gap-1">
+          {% for thread in Threads %}
+            <li class="contact-li flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all hover:bg-white/10" chat-id="chat_{{ thread.id }}">
+              <div class="relative">
+                <div class="h-10 w-10 rounded-full bg-indigo-500 flex items-center justify-center font-bold text-white">
+                    {% if thread.first_person == user %} {{ thread.second_person.username|slice:":1"|upper }} {% else %} {{ thread.first_person.username|slice:":1"|upper }} {% endif %}
+                </div>
+                <div class="absolute bottom-0 right-0 h-3 w-3 bg-emerald-500 border-2 border-[#1a237e] rounded-full"></div>
+              </div>
+              <div class="flex-1 min-w-0" chat-id="chat_{{ thread.id }}">
+                <p class="text-sm font-bold text-white truncate">
+                    {% if thread.first_person == user %} {{ thread.second_person.username }} {% else %} {{ thread.first_person.username }} {% endif %}
+                </p>
+                <p class="text-[10px] text-gray-500 truncate">Click to view messages</p>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main Chat Area -->
+    <main class="flex-1 flex flex-col bg-white/5 relative">
+      {% for thread in Threads %}
+        <div class="messages-wrapper flex flex-col h-full {% if forloop.first %}is_active{% else %}hidden{% endif %}" chat-id="chat_{{ thread.id }}" other-user-id="{% if thread.first_person == user %}{{ thread.second_person.id }}{% else %}{{ thread.first_person.id }}{% endif %}">
+          
+          <!-- Chat Header -->
+          <header class="p-4 border-b border-white/10 flex items-center justify-between bg-white/5">
+            <div class="flex items-center gap-3">
+              <div class="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-indigo-400 text-sm">chat_bubble</span>
+              </div>
+              <p class="text-sm font-bold text-white uppercase tracking-widest">
+                {% if thread.first_person == user %} {{ thread.second_person.username }} {% else %} {{ thread.first_person.username }} {% endif %}
+              </p>
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <label class="p-2 hover:bg-white/10 rounded-lg cursor-pointer text-gray-400 transition-colors">
+                <span class="material-symbols-outlined text-lg">attach_file</span>
+                <input type="file" id="file-input" class="hidden">
+              </label>
+              <label class="p-2 hover:bg-white/10 rounded-lg cursor-pointer text-gray-400 transition-colors">
+                <span class="material-symbols-outlined text-lg">image</span>
+                <input type="file" accept="image/*" id="gallery-input" class="hidden">
+              </label>
+            </div>
+          </header>
+
+          <!-- Messages History -->
+          <div class="chat-history flex-1 overflow-y-auto p-6 custom-scrollbar flex flex-col gap-4" id="chat-history">
+            {% for chat in thread.chatmessage_thread.all %}
+              {% if chat.user == user %}
+                <div class="flex flex-col items-end gap-1 max-w-[80%] self-end">
+                  <div class="bg-indigo-600 text-white p-3 rounded-2xl rounded-tr-none text-sm shadow-lg shadow-indigo-900/20">
+                    {{ chat.message|safe }}
+                  </div>
+                  <span class="text-[9px] text-gray-500 font-bold uppercase">{{ chat.timestamp|date:"d D" }}, {{ chat.timestamp|time:"H:i" }}</span>
+                </div>
+              {% else %}
+                <div class="flex flex-col items-start gap-1 max-w-[80%] self-start">
+                  <div class="bg-white/10 text-gray-200 p-3 rounded-2xl rounded-tl-none text-sm border border-white/10">
+                    {{ chat.message|safe }}
+                  </div>
+                  <span class="text-[9px] text-gray-500 font-bold uppercase">{{ chat.timestamp|date:"d D" }}, {{ chat.timestamp|time:"H:i" }}</span>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+
+      <!-- Input Bar (Fixed at bottom) -->
+      <footer class="p-4 border-t border-white/10 bg-white/5">
+        <form id="send-message-form" class="flex gap-2">
+          <input type="text" id="input-message" class="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition-all" placeholder="Type your message here...">
+          <button type="submit" class="h-12 w-12 bg-indigo-600 rounded-xl flex items-center justify-center text-white hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-900/40">
+            <span class="material-symbols-outlined">send</span>
+          </button>
+        </form>
+      </footer>
+    </main>
   </div>
+</div>
 
-  <script src="{% static 'js/messages.js' %}"></script>
-
+<script src="{% static 'js/messages.js' %}"></script>
 {% endblock %}

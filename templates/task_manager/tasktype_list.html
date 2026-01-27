@@ -1,22 +1,63 @@
 {% extends "base.html" %}
+
 {% block content %}
-  <h4 class="card-title">Task type list
-    <a href="{% url 'task_manager:task_type-create' %}" class="btn btn-primary link-to-page">Create</a>
-  </h4>
+<div class="flex flex-col gap-6">
+
+  <!-- Header Section -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
+    <div class="flex items-center gap-3">
+      <div class="h-10 w-10 rounded-lg bg-indigo-500/20 flex items-center justify-center">
+        <span class="material-symbols-outlined text-indigo-400">category</span>
+      </div>
+      <div>
+        <h2 class="text-2xl font-bold text-white">Task Types</h2>
+        <p class="text-gray-400 text-sm">Classification categories for MMI workflows</p>
+      </div>
+    </div>
+    <a href="{% url 'task_manager:task_type-create' %}" class="flex items-center gap-2 px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-indigo-500/20">
+      <span class="material-symbols-outlined text-sm">add_circle</span>
+      Create Type
+    </a>
+  </div>
+
+  <!-- Task Type List -->
   {% if task_type_list %}
-    <ul class="list-group list-group-flush list-group-item-action">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {% for task_type in task_type_list %}
-        <li class="list-group-item list-group-item-action">
-          <b>{{ task_type.pk }}.</b> {{ task_type }} 
-          <a href="{% url 'task_manager:task_type-delete' pk=task_type.pk %}" class="btn btn-danger link-to-page">Delete</a>
-          <a href="{% url 'task_manager:task_type-update' pk=task_type.pk %}" class="btn btn-warning link-to-page">Update</a>
-        </li>
+        <div class="group glassmorphism p-5 rounded-xl hover:bg-white/10 transition-all duration-200 border-none flex flex-col gap-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="text-[10px] font-black text-indigo-400 bg-indigo-500/10 h-6 w-6 rounded flex items-center justify-center border border-indigo-500/20">
+                {{ task_type.pk }}
+              </span>
+              <h3 class="text-white font-bold">{{ task_type }}</h3>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-2 pt-2 border-t border-white/5">
+            <a href="{% url 'task_manager:task_type-update' pk=task_type.pk %}" class="p-2 text-amber-400 hover:bg-amber-400/10 rounded-lg transition-colors" title="Update">
+              <span class="material-symbols-outlined text-lg">edit</span>
+            </a>
+            <a href="{% url 'task_manager:task_type-delete' pk=task_type.pk %}" class="p-2 text-red-400 hover:bg-red-400/10 rounded-lg transition-colors" title="Delete">
+              <span class="material-symbols-outlined text-lg">delete</span>
+            </a>
+          </div>
+        </div>
       {% endfor %}
-    </ul>
-    {% block paginate %}
-      {% include 'includes/pagination.html' %}
-    {% endblock %}
-    {% else %}
-      <p>There are no task types in the team.</p>
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-6">
+      {% block paginate %}
+        {% include 'includes/pagination.html' %}
+      {% endblock %}
+    </div>
+
+  {% else %}
+    <div class="glassmorphism p-12 rounded-xl text-center">
+      <span class="material-symbols-outlined text-5xl text-gray-600 mb-4">inventory_2</span>
+      <p class="text-gray-400 italic">No task types defined yet.</p>
+    </div>
   {% endif %}
+</div>
 {% endblock %}

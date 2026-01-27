@@ -1,26 +1,35 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8"/>
-    <title>Chat Rooms</title>
-</head>
-<body>
-    What chat room would you like to enter?<br>
-    <input id="room-name-input" type="text" size="100"><br>
-    <input id="room-name-submit" type="button" value="Enter">
+{% extends 'base.html' %}
 
-    <script>
-        document.querySelector('#room-name-input').focus();
-        document.querySelector('#room-name-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#room-name-submit').click();
-            }
-        };
+{% block content %}
+<div class="max-w-xl mx-auto py-20">
+  <div class="glassmorphism rounded-3xl p-10 flex flex-col items-center text-center shadow-2xl">
+    
+    <div class="h-20 w-20 rounded-2xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 mb-6">
+      <span class="material-symbols-outlined text-5xl">forum</span>
+    </div>
 
-        document.querySelector('#room-name-submit').onclick = function(e) {
-            var roomName = document.querySelector('#room-name-input').value;
-            window.location.pathname = '/chat/' + roomName + '/';
-        };
-    </script>
-</body>
-</html>
+    <h2 class="text-3xl font-black text-white mb-2">Public Channels</h2>
+    <p class="text-gray-400 mb-8">Enter a room name to join the discussion.</p>
+
+    <div class="w-full flex flex-col gap-4">
+      <input id="room-name-input" type="text" placeholder="Room Name (e.g. general, dev-team)" 
+             class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all">
+      
+      <button id="room-name-submit" class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-black uppercase tracking-widest transition-all shadow-xl shadow-indigo-900/40">
+        Join Channel
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+    document.querySelector('#room-name-input').focus();
+    document.querySelector('#room-name-input').onkeyup = function(e) {
+        if (e.keyCode === 13) { document.querySelector('#room-name-submit').click(); }
+    };
+    document.querySelector('#room-name-submit').onclick = function(e) {
+        var roomName = document.querySelector('#room-name-input').value;
+        if (roomName) window.location.pathname = '/chat/' + roomName + '/';
+    };
+</script>
+{% endblock %}

@@ -1,13 +1,63 @@
 {% extends "base.html" %}
+
 {% block content %}
-  <h4 class="card-title">Worker detail page</h4>
-  <p><strong>First name:</strong> {{ worker.first_name }}</p>
-  <p><strong>Last name:</strong> {{ worker.last_name }}</p>
-  <p><strong>Position:</strong> {{ worker.position }}</p>
-  <p><strong>Is staff:</strong> {{ worker.is_staff }}</p>
-  <p><strong>Date joined:</strong> {{ worker.date_joined }}</p>
-  
-  <a href="{% url 'task_manager:worker-update' pk=worker.pk %}" class="btn btn-warning btn-rounded btn-fw">Update</a>
-  <a href="{% url 'task_manager:worker-delete' pk=worker.pk %}" class="btn btn-danger btn-rounded btn-fw">Delete</a>
-  <a href="{% url 'task_manager:worker-list' %}" class="btn btn-secondary btn-rounded btn-fw">Back</a>
+<div class="max-w-4xl mx-auto flex flex-col gap-6">
+
+  <!-- Back Link -->
+  <a href="{% url 'task_manager:worker-list' %}" class="w-fit flex items-center gap-2 text-gray-500 hover:text-white transition-colors text-sm font-bold">
+    <span class="material-symbols-outlined">west</span> Back to Personnel
+  </a>
+
+  <!-- Profile Card -->
+  <div class="glassmorphism rounded-3xl p-8 relative overflow-hidden">
+    <!-- Accent Background -->
+    <div class="absolute -top-24 -right-24 h-64 w-64 bg-indigo-600/10 rounded-full blur-3xl"></div>
+
+    <div class="relative z-10 flex flex-col md:flex-row gap-8 items-start md:items-center">
+      <!-- Avatar Placeholder -->
+      <div class="h-32 w-32 rounded-3xl bg-indigo-600 flex items-center justify-center text-white shadow-2xl shadow-indigo-900/50">
+        <span class="material-symbols-outlined text-6xl">person</span>
+      </div>
+
+      <div class="flex-1">
+        <div class="flex items-center gap-3 mb-2">
+          <h2 class="text-4xl font-black text-white">{{ worker.first_name }} {{ worker.last_name }}</h2>
+          {% if worker.is_staff %}
+            <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full text-[10px] font-black uppercase tracking-tighter">
+              Staff
+            </span>
+          {% endif %}
+        </div>
+        <p class="text-xl text-indigo-400 font-medium mb-4">@{{ worker.username }}</p>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-white/10 pt-6">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-gray-500">work</span>
+            <div>
+              <p class="text-[10px] text-gray-500 uppercase font-black">Position</p>
+              <p class="text-white">{{ worker.position|default:"General Worker" }}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-gray-500">calendar_month</span>
+            <div>
+              <p class="text-[10px] text-gray-500 uppercase font-black">Member Since</p>
+              <p class="text-white">{{ worker.date_joined|date:"F Y" }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex items-center justify-end gap-3 mt-4">
+    <a href="{% url 'task_manager:worker-update' pk=worker.pk %}" class="px-6 py-2 rounded-xl bg-white/5 border border-amber-500/30 text-amber-500 hover:bg-amber-500 hover:text-white transition-all text-sm font-bold flex items-center gap-2">
+      <span class="material-symbols-outlined text-sm">edit</span> Update Profile
+    </a>
+    <a href="{% url 'task_manager:worker-delete' pk=worker.pk %}" class="px-6 py-2 rounded-xl bg-white/5 border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white transition-all text-sm font-bold flex items-center gap-2">
+      <span class="material-symbols-outlined text-sm">delete</span> Delete
+    </a>
+  </div>
+</div>
 {% endblock %}

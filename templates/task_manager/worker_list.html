@@ -1,40 +1,75 @@
 {% extends "base.html" %}
+
 {% block content %}
-  <h4 class="card-title">Worker table 
-    <a href="{% url 'task_manager:worker-create' %}" class="btn btn-primary btn-rounded btn-fw link-to-page">Create</a></h4>
-  <p class="card-description">
-    List of all workers
-  </p>
-  <div class="table-responsive">
-    {% if worker_list %}
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">First name</th>
-            <th scope="col">Last name</th>
-            <th scope="col">Username</th>
-            <th scope="col">Position</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for worker in worker_list %}
-          <tr>
-            <th scope="row"><a href="{% url 'task_manager:worker-detail' pk=worker.pk %}" class="btn btn-light btn-rounded btn-fw">{{ worker.pk }}</a></th>
-            <td>{{ worker.first_name }}</td>
-            <td>{{ worker.last_name }}</td>
-            <td>{{ worker.username }}</td>
-            <td>{{ worker.position }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      <br>
-      {% block pagination %}
-        {% include 'includes/pagination.html' %}
-      {% endblock %}
-    {% else %}
-    <p>There are no workers in the company.</p>
-  {% endif %}
+<div class="flex flex-col gap-6">
+
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
+    <div class="flex items-center gap-3">
+      <div class="h-10 w-10 rounded-lg bg-indigo-500/20 flex items-center justify-center">
+        <span class="material-symbols-outlined text-indigo-400">group</span>
+      </div>
+      <div>
+        <h2 class="text-2xl font-bold text-white">Workers</h2>
+        <p class="text-gray-400 text-sm">Personnel and Team Management</p>
+      </div>
+    </div>
+    <a href="{% url 'task_manager:worker-create' %}" class="flex items-center gap-2 px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-indigo-500/20">
+      <span class="material-symbols-outlined text-sm">person_add</span>
+      Add Worker
+    </a>
   </div>
+
+  <!-- Table Container -->
+  <div class="glassmorphism rounded-xl overflow-hidden">
+    {% if worker_list %}
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-white/5">
+              <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">ID</th>
+              <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Name</th>
+              <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Username</th>
+              <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Position</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5">
+            {% for worker in worker_list %}
+            <tr class="hover:bg-white/5 transition-colors group">
+              <td class="px-6 py-4">
+                <a href="{% url 'task_manager:worker-detail' pk=worker.pk %}" class="h-8 w-8 flex items-center justify-center bg-indigo-500/20 text-indigo-300 text-xs font-bold rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                  {{ worker.pk }}
+                </a>
+              </td>
+              <td class="px-6 py-4">
+                <p class="text-sm font-bold text-white">{{ worker.first_name }} {{ worker.last_name }}</p>
+              </td>
+              <td class="px-6 py-4">
+                <p class="text-sm text-gray-400">@{{ worker.username }}</p>
+              </td>
+              <td class="px-6 py-4">
+                <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold text-gray-300 uppercase">
+                  {{ worker.position|default:"Not Assigned" }}
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      
+      {% if is_paginated %}
+      <div class="p-4 border-t border-white/5">
+        {% include 'includes/pagination.html' %}
+      </div>
+      {% endif %}
+
+    {% else %}
+      <div class="p-12 text-center">
+        <span class="material-symbols-outlined text-5xl text-gray-600 mb-4">person_off</span>
+        <p class="text-gray-400 italic">No workers registered in the company.</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}
