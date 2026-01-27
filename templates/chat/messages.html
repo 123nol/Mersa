@@ -10,8 +10,23 @@
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
   <link rel="stylesheet" href="{% static 'css/messages.css' %}">
 
+
   {% if user.is_authenticated %}
     <input type="hidden" id="logged-in-user" value="{{ user.id }}">
+    <form method="post" action="{% url 'chat:start_chat' %}" class="mb-3" style="max-width: 400px;">
+      {% csrf_token %}
+      <div class="input-group">
+        <select name="other_user_id" class="form-control" required>
+          <option value="">Start chat with...</option>
+          {% for worker in all_workers %}
+            {% if worker != user %}
+              <option value="{{ worker.id }}">{{ worker.username }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+        <button class="btn btn-primary" type="submit">Start</button>
+      </div>
+    </form>
   {% endif %}
 
   <div class="container">
@@ -74,10 +89,16 @@
                       {#                  </div>#}
                     </div>
                     <div class="col-lg-6 hidden-sm text-right">
-                      <a href="javascript:void(0);" class="btn btn-outline-secondary"><i class="fa fa-camera"></i></a>
-                      <a href="javascript:void(0);" class="btn btn-outline-primary"><i class="fa fa-image"></i></a>
-                      <a href="javascript:void(0);" class="btn btn-outline-info"><i class="fa fa-cogs"></i></a>
-                      <a href="javascript:void(0);" class="btn btn-outline-warning"><i class="fa fa-question"></i></a>
+                      <!-- Paperclip Button: triggers file input for work files -->
+                      <label class="btn btn-outline-secondary" style="margin-bottom:0;">
+                        <i class="fa fa-paperclip"></i>
+                        <input type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip,.rar,.7z,.odt,.ods,.odp,.rtf,.html,.xml,.json,.md,.jpg,.jpeg,.png,.gif,.bmp,.svg,.webp" style="display:none;" id="file-input">
+                      </label>
+                      <!-- Gallery Button: triggers file input for gallery selection -->
+                      <label class="btn btn-outline-primary" style="margin-bottom:0;">
+                        <i class="fa fa-image"></i>
+                        <input type="file" accept="image/*" style="display:none;" id="gallery-input">
+                      </label>
                     </div>
                   </div>
                 </div>
@@ -92,7 +113,7 @@
                             class="message-data-time">{{ chat.timestamp|date:"d D" }}, {{ chat.timestamp|time:"H:i" }}</span>
                       </div>
                       <div class="message other-message float-right">
-                        {{ chat.message }}
+                        {{ chat.message|safe }}
                       </div>
                     </li>
                   {% else %}
@@ -102,8 +123,7 @@
                               class="message-data-time">{{ chat.timestamp|date:"d D" }}, {{ chat.timestamp|time:"H:i" }}</span>
                       </div>
                       <div class="message my-message">
-                        {{ chat.message }}
-{#                        Are we meeting today?#}
+                        {{ chat.message|safe }}
                       </div>
                     </li>
                   {% endif %}

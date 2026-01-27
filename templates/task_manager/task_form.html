@@ -3,9 +3,21 @@
 {% block content %}
   <h4 class="card-title">{{ object|yesno:"Update,Create" }} task</h4>
   <div class="form-group">
-    <form action="" method="post" novalidate>
+    <form action="" method="post" enctype="multipart/form-data" novalidate>
       {% csrf_token %}
       {{ form|crispy }}
+      <label for="id_attachments">Attachments (PDF only):</label>
+      <input type="file" name="attachments" id="id_attachments" accept="application/pdf" multiple>
+      {% if attachments %}
+        <div class="mt-2">
+          <strong>Existing Attachments:</strong>
+          <ul>
+            {% for attachment in attachments %}
+              <li><a href="{{ attachment.file.url }}" target="_blank">{{ attachment.file.name|cut:'attachments/' }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
       <input type="submit" class="btn btn-primary me-2">
       <a href="{% url 'task_manager:task-list' %}" class="btn btn-secondary">Back</a>
     </form>

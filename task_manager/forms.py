@@ -4,6 +4,8 @@ from django.contrib.auth.forms import UserCreationForm
 
 from task_manager.models import Worker, Task
 
+from task_manager.models import Attachment
+
 
 class WorkerCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
@@ -11,10 +13,17 @@ class WorkerCreationForm(UserCreationForm):
         fields = UserCreationForm.Meta.fields + ("position",)
 
 
+
 class TaskForm(forms.ModelForm):
     assignees = forms.ModelMultipleChoiceField(
         queryset=get_user_model().objects.all(),
         widget=forms.CheckboxSelectMultiple,
+    )
+
+    deadline = forms.DateField(
+        widget=forms.DateInput(attrs={"type": "date", "placeholder": "MM/DD/YYYY", "class": "form-control"}),
+        input_formats=["%m/%d/%Y", "%Y-%m-%d"],
+        help_text="Format: MM/DD/YYYY",
     )
 
     def __init__(self, *args, **kwargs):
@@ -24,6 +33,13 @@ class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = "__all__"
+
+
+# Form for uploading attachments
+class AttachmentForm(forms.ModelForm):
+    class Meta:
+        model = Attachment
+        fields = ["file"]
 
 
 class RegistrationForm(UserCreationForm):

@@ -123,16 +123,44 @@ class TaskCreateView(LoginRequiredMixin, generic.CreateView):
     form_class = TaskForm
     success_url = reverse_lazy("task_manager:task-list")
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        files = self.request.FILES.getlist("attachments")
+        for f in files:
+            if f.content_type == "application/pdf":
+                from task_manager.models import Attachment
+                Attachment.objects.create(task=self.object, file=f)
+        return response
+
 
 class TaskDetailView(LoginRequiredMixin, generic.DetailView):
     model = Task
-    queryset = Task.objects.select_related("task_type").prefetch_related("assignees")
+    queryset = Task.objects.select_related("task_type").prefetch_related("assignees", "attachments")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["attachments"] = self.object.attachments.all()
+        return context
 
 
 class TaskUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Task
     form_class = TaskForm
     success_url = reverse_lazy("task_manager:task-list")
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        files = self.request.FILES.getlist("attachments")
+        for f in files:
+            if f.content_type == "application/pdf":
+                from task_manager.models import Attachment
+                Attachment.objects.create(task=self.object, file=f)
+        return response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["attachments"] = self.object.attachments.all()
+        return context
 
 
 class TaskDeleteView(LoginRequiredMixin, generic.DeleteView):

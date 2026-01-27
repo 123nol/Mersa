@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-
+from django.utils import timezone
 
 class Task(models.Model):
     PRIORITY_CHOICES = {
@@ -11,7 +11,8 @@ class Task(models.Model):
     }
     name = models.CharField(max_length=255)
     description = models.TextField()
-    deadline = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    deadline = models.DateField()
     is_completed = models.BooleanField()
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default="low")
     task_type = models.ForeignKey("TaskType", on_delete=models.CASCADE)
@@ -19,6 +20,13 @@ class Task(models.Model):
 
     def __str__(self):
         return self.name
+
+
+# Attachment model for file uploads
+class Attachment(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="attachments")
+    file = models.FileField(upload_to="attachments/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
 
 class TaskType(models.Model):
