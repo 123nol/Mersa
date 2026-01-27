@@ -6,7 +6,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = ["yourdomain.com", "www.yourdomain.com"]
 
-SECRET_KEY = os.getenv("SECRET_KEY")  # must be set in server env
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")  # must be set in server env
 
 # Security
 SECURE_SSL_REDIRECT = True
