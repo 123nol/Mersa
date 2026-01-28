@@ -125,6 +125,7 @@ class TaskType(models.Model):
 
 class Worker(AbstractUser):
     role = models.CharField(max_length=50, blank=True)
+    visit_count = models.PositiveIntegerField(default=0)
 
 
 class Position(models.Model):
