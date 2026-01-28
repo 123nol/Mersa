@@ -10,7 +10,7 @@ from task_manager.models import Attachment
 class WorkerCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = Worker
-        fields = UserCreationForm.Meta.fields + ("position",)
+        fields = ("username", "email", "role")
 
 
 
