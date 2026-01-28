@@ -42,7 +42,8 @@ ROOT_URLCONF = 'it_company_task_manager.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "templates"],
+        # Look for templates inside the settings package and the project root
+        'DIRS': [BASE_DIR / "templates", BASE_DIR.parent / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
