@@ -9,23 +9,15 @@ https://docs.djangoproject.com/en/5.0/howto/deployment/asgi/
 
 import os
 
-from channels.auth import AuthMiddlewareStack
-from channels.routing import ProtocolTypeRouter, URLRouter
-from channels.security.websocket import AllowedHostsOriginValidator
+
 from django.core.asgi import get_asgi_application
+from whitenoise import WhiteNoise
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "it_company_task_manager.settings")
 # Initialize Django ASGI application early to ensure the AppRegistry
 # is populated before importing code that may import ORM models.
 django_asgi_app = get_asgi_application()
+application = WhiteNoise(django_asgi_app, root=os.path.join(os.path.dirname(__file__), 'staticfiles'))
 
-import chat.routing
-
-application = ProtocolTypeRouter(
-    {
-        "http": django_asgi_app,
-        "websocket": AllowedHostsOriginValidator(
-            AuthMiddlewareStack(URLRouter(chat.routing.websocket_urlpatterns))
-        ),
-    }
-)
+# Optional: enable gzip compression for faster delivery
+application.add_files(os.path.join(os.path.dirname(__file__), 'staticfiles'), prefix='static/')
