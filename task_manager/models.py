@@ -121,12 +121,7 @@ class TaskType(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class Worker(AbstractUser):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-
+    
 class Position(models.Model):
     name = models.CharField(max_length=255)
 
