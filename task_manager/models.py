@@ -124,10 +124,7 @@ class TaskType(models.Model):
 
 
 class Worker(AbstractUser):
-    position = models.ForeignKey(
-        "Position", on_delete=models.CASCADE, db_constraint=False, default=1
-    )
-    visit_count = models.PositiveIntegerField(default=0)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 
 class Position(models.Model):
