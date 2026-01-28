@@ -46,7 +46,6 @@ INTERNAL_IPS = [
 
 INSTALLED_APPS = [
     "daphne",
-    "admin_star",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",

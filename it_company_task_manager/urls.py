@@ -34,7 +34,6 @@ urlpatterns = [
     # Accept legacy hyphenated URL and redirect to the canonical underscore route
     path('accounts/password-change/', RedirectView.as_view(url='/accounts/password_change/', permanent=False)),
     path("", include("task_manager.urls", namespace="task_manager")),
-    path("", include("admin_star.urls")),
     path("chat/", include("chat.urls", namespace="chat")),
 ] + debug_toolbar_urls()
 
