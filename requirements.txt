@@ -51,6 +51,7 @@ typing_extensions==4.11.0
 uvicorn==0.29.0
 whitenoise==6.6.0
 zope.interface==6.4.post2
+whitenoise
 
 ## Developer / test extras
 pytest==7.4.2
