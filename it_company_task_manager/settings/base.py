@@ -3,12 +3,18 @@ import os
 from dotenv import load_dotenv
 import dj_database_url
 
-load_dotenv()  # load .env locally
+# Load .env for local dev
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Security
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")  # fallback only for dev
+DEBUG = True
 
+ALLOWED_HOSTS = []
+
+# Applications
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -18,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'chat',
     'task_manager',
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -37,23 +44,21 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
-        'OPTIONS': {'context_processors': [
-            'django.template.context_processors.debug',
-            'django.template.context_processors.request',
-            'django.contrib.auth.context_processors.auth',
-            'django.contrib.messages.context_processors.messages',
-        ]},
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
     },
 ]
 
 WSGI_APPLICATION = 'it_company_task_manager.wsgi.application'
 ASGI_APPLICATION = 'it_company_task_manager.asgi.application'
 
-# Static files
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / "staticfiles"
-
-# Database default (PostgreSQL dev)
+# Default local database (PostgreSQL)
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -67,10 +72,40 @@ DATABASES = {
 
 # Override with DATABASE_URL if present
 db_from_env = dj_database_url.config(conn_max_age=600)
-DATABASES["default"].update(db_from_env)
+if db_from_env:
+    DATABASES["default"].update(db_from_env)
 
-# Password validation, language, timezone, etc.
+# For local development (DEBUG=True) prefer a simple SQLite DB so commands
+# like `manage.py migrate` can run without needing network access to a
+# production Postgres instance.
+if DEBUG:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
+
+# Password validation
+AUTH_PASSWORD_VALIDATORS = [
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+]
+
+# Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
+
+# Static
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Default primary key
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Custom user
+AUTH_USER_MODEL = "task_manager.Worker"

@@ -7,8 +7,9 @@ from task_manager.models import Worker, Task, Workspace, WorkspaceMembership
 from task_manager.models import Attachment
 
 
+Worker = get_user_model()
 class WorkerCreationForm(UserCreationForm):
-    class Meta(UserCreationForm.Meta):
+    class Meta:
         model = Worker
         fields = ("username", "email", "role")
 

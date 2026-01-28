@@ -34,6 +34,8 @@ DEBUG = os.environ.get("DJANGO_DEBUG", "") != "False"
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "it-company-task-manager-pt9n.onrender.com"]
 
+AUTH_USER_MODEL = "task_manager.Worker"
+
 INTERNAL_IPS = [
     # ...
     "127.0.0.1",
@@ -105,6 +107,15 @@ DATABASES = {
 # Override with DATABASE_URL if present (for production)
 db_from_env = dj_database_url.config(conn_max_age=600)
 DATABASES["default"].update(db_from_env)
+
+# Ensure a valid ENGINE is present. If environment configuration is empty
+# (for example when DATABASE_URL is unset or malformed), fall back to
+# a local SQLite database so management commands can run locally.
+if not DATABASES["default"].get("ENGINE"):
+    DATABASES["default"].update({
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    })
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
