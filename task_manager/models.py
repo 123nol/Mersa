@@ -121,7 +121,12 @@ class TaskType(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+
+class Worker(AbstractUser):
+    role = models.CharField(max_length=50, blank=True)
+
+
 class Position(models.Model):
     name = models.CharField(max_length=255)
 
