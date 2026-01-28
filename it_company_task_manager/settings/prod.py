@@ -4,7 +4,7 @@ import os
 
 DEBUG = False
 
-ALLOWED_HOSTS = ["yourdomain.com", "www.yourdomain.com"]
+ALLOWED_HOSTS = ["yourdomain.com", "www.yourdomain.com", "mersa.onrender.com"] 
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")  # must be set in server env
 
