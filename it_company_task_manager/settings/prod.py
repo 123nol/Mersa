@@ -10,6 +10,7 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")  # must be set in server env
 
 # Security
 SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_HSTS_SECONDS = 31536000
@@ -32,3 +33,6 @@ LOGGING = {
     },
 }
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://mersa.onrender.com",
+]
